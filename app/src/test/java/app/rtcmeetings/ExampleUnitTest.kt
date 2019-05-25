@@ -1,4 +1,4 @@
-package app.client
+package app.rtcmeetings
 
 import org.junit.Test
 
