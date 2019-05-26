@@ -1,13 +1,13 @@
 package app.rtcmeetings.ui
 
 import android.os.Bundle
-import android.os.PersistableBundle
-import androidx.appcompat.app.AppCompatActivity
 import app.rtcmeetings.R
+import app.rtcmeetings.base.BaseActivity
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+class MainActivity : BaseActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
 }
