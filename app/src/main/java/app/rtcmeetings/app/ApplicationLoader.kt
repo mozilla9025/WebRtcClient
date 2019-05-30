@@ -10,9 +10,10 @@ class ApplicationLoader : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        injector = DaggerAppComponent.builder()
-            .application(this)
-            .build()
+        injector = DaggerAppComponent.builder().apply {
+            application(this@ApplicationLoader)
+        }
+                .build()
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> = injector
