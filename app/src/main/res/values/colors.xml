@@ -7,4 +7,9 @@
     <color name="callGradientTop">#6582ff</color>
     <color name="callGradientBot">#123597</color>
 
+    <color name="white">#ffffff</color>
+    <color name="green">#00bb3f</color>
+    <color name="red">#ff0201</color>
+    <color name="transparent_white">#92797979</color>
+
 </resources>

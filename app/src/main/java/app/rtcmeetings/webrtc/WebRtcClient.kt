@@ -1,57 +1,25 @@
 package app.rtcmeetings.webrtc
 
 import android.content.Context
-import android.util.Log
 import app.rtcmeetings.util.logd
 import app.rtcmeetings.util.loge
 import app.rtcmeetings.util.logi
 import app.rtcmeetings.util.logw
-
-import org.webrtc.AudioSource
-import org.webrtc.AudioTrack
-import org.webrtc.CameraVideoCapturer
-import org.webrtc.DataChannel
-import org.webrtc.DefaultVideoDecoderFactory
-import org.webrtc.DefaultVideoEncoderFactory
-import org.webrtc.EglBase
-import org.webrtc.IceCandidate
-import org.webrtc.Logging
-import org.webrtc.MediaConstraints
-import org.webrtc.MediaStream
-import org.webrtc.MediaStreamTrack
-import org.webrtc.PeerConnection
+import org.webrtc.*
 import org.webrtc.PeerConnection.IceConnectionState
 import org.webrtc.PeerConnection.PeerConnectionState
-import org.webrtc.PeerConnectionFactory
-import org.webrtc.RtpParameters
-import org.webrtc.RtpReceiver
-import org.webrtc.RtpSender
-import org.webrtc.RtpTransceiver
-import org.webrtc.SdpObserver
-import org.webrtc.SessionDescription
-import org.webrtc.SurfaceTextureHelper
-import org.webrtc.VideoCapturer
-import org.webrtc.VideoDecoderFactory
-import org.webrtc.VideoEncoderFactory
-import org.webrtc.VideoSink
-import org.webrtc.VideoSource
-import org.webrtc.VideoTrack
 import org.webrtc.audio.AudioDeviceModule
 import org.webrtc.audio.JavaAudioDeviceModule
 import org.webrtc.audio.JavaAudioDeviceModule.AudioRecordErrorCallback
 import org.webrtc.audio.JavaAudioDeviceModule.AudioTrackErrorCallback
-
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.Collections
-import java.util.regex.Matcher
+import java.util.*
 import java.util.regex.Pattern
 
 class WebRtcClient(
-    private val appContext: Context,
-    private val rootEglBase: EglBase,
-    private val peerConnectionParameters: PeerConnectionParameters,
-    private val events: PeerConnectionEvents?
+        private val appContext: Context,
+        private val rootEglBase: EglBase,
+        private val peerConnectionParameters: PeerConnectionParameters,
+        private val events: PeerConnectionEvents?
 ) {
 
     private val pcObserver = PCObserver()
@@ -83,12 +51,7 @@ class WebRtcClient(
     private var enableAudio = true
     private var localAudioTrack: AudioTrack? = null
 
-    val isHDVideo: Boolean
-        get() = videoWidth * videoHeight >= 1280 * 720
 
-    /**
-     * Peer connection parameters.
-     */
     class PeerConnectionParameters(internal val videoCallEnabled: Boolean) {
         internal val videoWidth: Int
         internal val videoHeight: Int
@@ -127,10 +90,10 @@ class WebRtcClient(
         logd("Preferred video codec: " + getSdpVideoCodecName(peerConnectionParameters))
         val fieldTrials = getFieldTrials(peerConnectionParameters)
         PeerConnectionFactory.initialize(
-            PeerConnectionFactory.InitializationOptions.builder(appContext)
-                .setFieldTrials(fieldTrials)
-                .setEnableInternalTracer(true)
-                .createInitializationOptions()
+                PeerConnectionFactory.InitializationOptions.builder(appContext)
+                        .setFieldTrials(fieldTrials)
+                        .setEnableInternalTracer(true)
+                        .createInitializationOptions()
         )
     }
 
@@ -145,10 +108,10 @@ class WebRtcClient(
     }
 
     fun createPeerConnection(
-        localRender: VideoSink,
-        remoteSink: VideoSink,
-        videoCapturer: VideoCapturer?,
-        iceServers: MutableList<PeerConnection.IceServer>
+            localRender: VideoSink,
+            remoteSink: VideoSink,
+            videoCapturer: VideoCapturer?,
+            iceServers: MutableList<PeerConnection.IceServer>
     ) {
 
         if (peerConnectionParameters.videoCallEnabled && videoCapturer == null) {
@@ -158,10 +121,10 @@ class WebRtcClient(
     }
 
     fun createPeerConnection(
-        localRender: VideoSink,
-        remoteSinks: MutableList<VideoSink>,
-        videoCapturer: VideoCapturer?,
-        iceServers: MutableList<PeerConnection.IceServer>
+            localRender: VideoSink,
+            remoteSinks: MutableList<VideoSink>,
+            videoCapturer: VideoCapturer?,
+            iceServers: MutableList<PeerConnection.IceServer>
     ) {
 
         this.localRender = localRender
@@ -187,7 +150,7 @@ class WebRtcClient(
 
         // Check if ISAC is used by default.
         preferIsac =
-            peerConnectionParameters.audioCodec != null && peerConnectionParameters.audioCodec == AUDIO_CODEC_ISAC
+                peerConnectionParameters.audioCodec != null && peerConnectionParameters.audioCodec == AUDIO_CODEC_ISAC
 
         val adm = createAudioDevice()
         // Create peer connection factory.
@@ -197,17 +160,17 @@ class WebRtcClient(
         val enableH264HighProfile = VIDEO_CODEC_H264_HIGH == peerConnectionParameters.videoCodec
 
         val encoderFactory = DefaultVideoEncoderFactory(
-            rootEglBase.eglBaseContext,
-            true, enableH264HighProfile
+                rootEglBase.eglBaseContext,
+                true, enableH264HighProfile
         )
 
         val decoderFactory = DefaultVideoDecoderFactory(rootEglBase.eglBaseContext)
         factory = PeerConnectionFactory.builder()
-            .setOptions(options)
-            .setAudioDeviceModule(adm)
-            .setVideoEncoderFactory(encoderFactory)
-            .setVideoDecoderFactory(decoderFactory)
-            .createPeerConnectionFactory()
+                .setOptions(options)
+                .setAudioDeviceModule(adm)
+                .setVideoEncoderFactory(encoderFactory)
+                .setVideoDecoderFactory(decoderFactory)
+                .createPeerConnectionFactory()
         logd("Peer connection factory created.")
         adm.release()
     }
@@ -220,7 +183,7 @@ class WebRtcClient(
             }
 
             override fun onWebRtcAudioRecordStartError(
-                errorCode: JavaAudioDeviceModule.AudioRecordStartErrorCode, errorMessage: String
+                    errorCode: JavaAudioDeviceModule.AudioRecordStartErrorCode, errorMessage: String
             ) {
                 loge("onWebRtcAudioRecordStartError: $errorCode. $errorMessage")
                 reportError(errorMessage)
@@ -238,7 +201,7 @@ class WebRtcClient(
             }
 
             override fun onWebRtcAudioTrackStartError(
-                errorCode: JavaAudioDeviceModule.AudioTrackStartErrorCode, errorMessage: String
+                    errorCode: JavaAudioDeviceModule.AudioTrackStartErrorCode, errorMessage: String
             ) {
                 loge("onWebRtcAudioTrackStartError: $errorCode. $errorMessage")
                 reportError(errorMessage)
@@ -250,11 +213,11 @@ class WebRtcClient(
             }
         }
         return JavaAudioDeviceModule.builder(appContext)
-            .setUseHardwareAcousticEchoCanceler(!peerConnectionParameters!!.disableBuiltInAEC)
-            .setUseHardwareNoiseSuppressor(!peerConnectionParameters.disableBuiltInNS)
-            .setAudioRecordErrorCallback(audioRecordErrorCallback)
-            .setAudioTrackErrorCallback(audioTrackErrorCallback)
-            .createAudioDeviceModule()
+                .setUseHardwareAcousticEchoCanceler(!peerConnectionParameters!!.disableBuiltInAEC)
+                .setUseHardwareNoiseSuppressor(!peerConnectionParameters.disableBuiltInNS)
+                .setAudioRecordErrorCallback(audioRecordErrorCallback)
+                .setAudioTrackErrorCallback(audioTrackErrorCallback)
+                .createAudioDeviceModule()
     }
 
     private fun createMediaConstraintsInternal() {
@@ -278,16 +241,16 @@ class WebRtcClient(
         if (peerConnectionParameters.noAudioProcessing) {
             logd("Disabling audio processing")
             audioConstraints!!.mandatory.add(
-                MediaConstraints.KeyValuePair(AUDIO_ECHO_CANCELLATION_CONSTRAINT, "false")
+                    MediaConstraints.KeyValuePair(AUDIO_ECHO_CANCELLATION_CONSTRAINT, "false")
             )
             audioConstraints!!.mandatory.add(
-                MediaConstraints.KeyValuePair(AUDIO_AUTO_GAIN_CONTROL_CONSTRAINT, "false")
+                    MediaConstraints.KeyValuePair(AUDIO_AUTO_GAIN_CONTROL_CONSTRAINT, "false")
             )
             audioConstraints!!.mandatory.add(
-                MediaConstraints.KeyValuePair(AUDIO_HIGH_PASS_FILTER_CONSTRAINT, "false")
+                    MediaConstraints.KeyValuePair(AUDIO_HIGH_PASS_FILTER_CONSTRAINT, "false")
             )
             audioConstraints!!.mandatory.add(
-                MediaConstraints.KeyValuePair(AUDIO_NOISE_SUPPRESSION_CONSTRAINT, "false")
+                    MediaConstraints.KeyValuePair(AUDIO_NOISE_SUPPRESSION_CONSTRAINT, "false")
             )
         }
         // Create SDP constraints.
@@ -308,7 +271,7 @@ class WebRtcClient(
         val rtcConfig = PeerConnection.RTCConfiguration(iceServers)
         // TCP candidates are only useful when connecting to a server that supports
         // ICE-TCP.
-        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED
+        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED
         rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXCOMPAT
         rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.NEGOTIATE
         //        rtcConfig.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
@@ -459,8 +422,8 @@ class WebRtcClient(
 
         if (peerConnectionParameters.audioStartBitrate > 0) {
             sdpDescription = setStartBitrate(
-                AUDIO_CODEC_OPUS, false,
-                sdpDescription, peerConnectionParameters.audioStartBitrate
+                    AUDIO_CODEC_OPUS, false,
+                    sdpDescription, peerConnectionParameters.audioStartBitrate
             )
         }
 
@@ -586,11 +549,11 @@ class WebRtcClient(
 
     private inner class PCObserver : PeerConnection.Observer {
         override fun onIceCandidate(candidate: IceCandidate) {
-            events!!.onLocalIceCandidate(candidate)
+            events?.onLocalIceCandidate(candidate)
         }
 
         override fun onIceCandidatesRemoved(candidates: Array<IceCandidate>) {
-            events!!.onLocalIceCandidatesRemoved(candidates)
+            events?.onLocalIceCandidatesRemoved(candidates)
         }
 
         override fun onSignalingChange(newState: PeerConnection.SignalingState) {
@@ -600,8 +563,8 @@ class WebRtcClient(
         override fun onIceConnectionChange(newState: IceConnectionState) {
             logd("IceConnectionState: $newState")
             when (newState) {
-                IceConnectionState.CONNECTED -> events!!.onIceConnected()
-                IceConnectionState.DISCONNECTED -> events!!.onIceDisconnected()
+                IceConnectionState.CONNECTED -> events?.onIceConnected()
+                IceConnectionState.DISCONNECTED -> events?.onIceDisconnected()
                 IceConnectionState.FAILED -> reportError("ICE connection failed.")
             }
         }
@@ -650,8 +613,8 @@ class WebRtcClient(
                 sdpDescription = preferCodec(sdpDescription, AUDIO_CODEC_ISAC, true)
             }
             sdpDescription = preferCodec(
-                sdpDescription,
-                getSdpVideoCodecName(peerConnectionParameters!!), false
+                    sdpDescription,
+                    getSdpVideoCodecName(peerConnectionParameters!!), false
             )
 
             val sdp = SessionDescription(origSdp.type, sdpDescription)
@@ -673,12 +636,12 @@ class WebRtcClient(
                 if (peerConnection!!.remoteDescription == null) {
                     // We've just set our local SDP so time to send it.
                     logd("Local SDP set succesfully")
-                    events!!.onLocalDescriptionSet(localSdp!!)//fixSdpBundle(localSdp, true));
+                    events?.onLocalDescriptionSet(localSdp!!)//fixSdpBundle(localSdp, true));
                 } else {
                     // We've just set remote description, so drain remote
                     // and send local ICE candidates.
                     logd("Remote SDP set succesfully")
-                    events!!.onRemoteDescriptionSet(remoteSdp!!)
+                    events?.onRemoteDescriptionSet(remoteSdp!!)
                 }
             } else {
                 // For answering peer connection we set remote SDP and then
@@ -687,12 +650,12 @@ class WebRtcClient(
                     // We've just set our local SDP so time to send it, drain
                     // remote and send local ICE candidates.
                     logd("Local SDP set succesfully")
-                    events!!.onLocalDescriptionSet(localSdp!!)//fixSdpBundle(localSdp, true));
+                    events?.onLocalDescriptionSet(localSdp!!)//fixSdpBundle(localSdp, true));
                 } else {
                     // We've just set remote SDP - do nothing for now -
                     // answer will be created soon.
                     logd("Remote SDP set succesfully")
-                    events!!.onRemoteDescriptionSet(remoteSdp!!)
+                    events?.onRemoteDescriptionSet(remoteSdp!!)
                 }
             }
         }
@@ -707,29 +670,29 @@ class WebRtcClient(
     }
 
     companion object {
-        private val VIDEO_TRACK_ID = "ARDAMSv0"
-        private val AUDIO_TRACK_ID = "ARDAMSa0"
-        private val VIDEO_TRACK_TYPE = "video"
-        private val TAG = "PeerConnectionClient"
-        private val VIDEO_CODEC_VP8 = "VP8"
-        private val VIDEO_CODEC_VP9 = "VP9"
-        private val VIDEO_CODEC_H264 = "H264"
-        private val VIDEO_CODEC_H264_BASELINE = "H264 Baseline"
-        private val VIDEO_CODEC_H264_HIGH = "H264 High"
-        private val AUDIO_CODEC_OPUS = "opus"
-        private val AUDIO_CODEC_ISAC = "ISAC"
-        private val VIDEO_CODEC_PARAM_START_BITRATE = "x-google-start-bitrate"
-        private val VIDEO_FLEXFEC_FIELDTRIAL = "WebRTC-FlexFEC-03-Advertised/Enabled/WebRTC-FlexFEC-03/Enabled/"
-        private val VIDEO_VP8_INTEL_HW_ENCODER_FIELDTRIAL = "WebRTC-IntelVP8/Enabled/"
-        private val DISABLE_WEBRTC_AGC_FIELDTRIAL = "WebRTC-Audio-MinimizeResamplingOnMobile/Enabled/"
-        private val AUDIO_CODEC_PARAM_BITRATE = "maxaveragebitrate"
-        private val AUDIO_ECHO_CANCELLATION_CONSTRAINT = "googEchoCancellation"
-        private val AUDIO_AUTO_GAIN_CONTROL_CONSTRAINT = "googAutoGainControl"
-        private val AUDIO_HIGH_PASS_FILTER_CONSTRAINT = "googHighpassFilter"
-        private val AUDIO_NOISE_SUPPRESSION_CONSTRAINT = "googNoiseSuppression"
-        private val HD_VIDEO_WIDTH = 1280
-        private val HD_VIDEO_HEIGHT = 720
-        private val BPS_IN_KBPS = 1000
+        private const val VIDEO_TRACK_ID = "ARDAMSv0"
+        private const val AUDIO_TRACK_ID = "ARDAMSa0"
+        private const val VIDEO_TRACK_TYPE = "video"
+        private const val TAG = "PeerConnectionClient"
+        private const val VIDEO_CODEC_VP8 = "VP8"
+        private const val VIDEO_CODEC_VP9 = "VP9"
+        private const val VIDEO_CODEC_H264 = "H264"
+        private const val VIDEO_CODEC_H264_BASELINE = "H264 Baseline"
+        private const val VIDEO_CODEC_H264_HIGH = "H264 High"
+        private const val AUDIO_CODEC_OPUS = "opus"
+        private const val AUDIO_CODEC_ISAC = "ISAC"
+        private const val VIDEO_CODEC_PARAM_START_BITRATE = "x-google-start-bitrate"
+        private const val VIDEO_FLEXFEC_FIELDTRIAL = "WebRTC-FlexFEC-03-Advertised/Enabled/WebRTC-FlexFEC-03/Enabled/"
+        private const val VIDEO_VP8_INTEL_HW_ENCODER_FIELDTRIAL = "WebRTC-IntelVP8/Enabled/"
+        private const val DISABLE_WEBRTC_AGC_FIELDTRIAL = "WebRTC-Audio-MinimizeResamplingOnMobile/Enabled/"
+        private const val AUDIO_CODEC_PARAM_BITRATE = "maxaveragebitrate"
+        private const val AUDIO_ECHO_CANCELLATION_CONSTRAINT = "googEchoCancellation"
+        private const val AUDIO_AUTO_GAIN_CONTROL_CONSTRAINT = "googAutoGainControl"
+        private const val AUDIO_HIGH_PASS_FILTER_CONSTRAINT = "googHighpassFilter"
+        private const val AUDIO_NOISE_SUPPRESSION_CONSTRAINT = "googNoiseSuppression"
+        private const val HD_VIDEO_WIDTH = 1280
+        private const val HD_VIDEO_HEIGHT = 720
+        private const val BPS_IN_KBPS = 1000
 
         private fun getSdpVideoCodecName(parameters: PeerConnectionParameters): String {
             when (parameters.videoCodec) {
@@ -755,10 +718,10 @@ class WebRtcClient(
         }
 
         private fun setStartBitrate(
-            codec: String,
-            isVideoCodec: Boolean,
-            sdpDescription: String,
-            bitrateKbps: Int
+                codec: String,
+                isVideoCodec: Boolean,
+                sdpDescription: String,
+                bitrateKbps: Int
         ): String {
             val lines = sdpDescription.split("\r\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             var rtpmapLineIndex = -1
@@ -831,9 +794,9 @@ class WebRtcClient(
         }
 
         private fun joinString(
-            s: Iterable<CharSequence>,
-            delimiter: String,
-            delimiterAtEnd: Boolean
+                s: Iterable<CharSequence>,
+                delimiter: String,
+                delimiterAtEnd: Boolean
         ): String {
 
             val iter = s.iterator()
@@ -851,8 +814,8 @@ class WebRtcClient(
         }
 
         private fun movePayloadTypesToFront(
-            preferredPayloadTypes: List<String>,
-            mLine: String
+                preferredPayloadTypes: List<String>,
+                mLine: String
         ): String? {
 
             // The format of the media description line should be: m=<media> <port> <proto> <fmt> ...
@@ -874,9 +837,9 @@ class WebRtcClient(
         }
 
         private fun preferCodec(
-            sdpDescription: String,
-            codec: String,
-            isAudio: Boolean
+                sdpDescription: String,
+                codec: String,
+                isAudio: Boolean
         ): String {
 
             val lines = sdpDescription.split("\r\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -900,7 +863,8 @@ class WebRtcClient(
                 logw("No payload types with name $codec")
                 return sdpDescription
             }
-            val newMLine = movePayloadTypesToFront(codecPayloadTypes, lines[mLineIndex]) ?: return sdpDescription
+            val newMLine = movePayloadTypesToFront(codecPayloadTypes, lines[mLineIndex])
+                    ?: return sdpDescription
             logd("Change media description from: " + lines[mLineIndex] + " to " + newMLine)
             lines[mLineIndex] = newMLine
             return joinString(Arrays.asList(*lines), "\r\n", true)
