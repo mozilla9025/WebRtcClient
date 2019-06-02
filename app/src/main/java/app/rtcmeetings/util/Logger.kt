@@ -11,3 +11,5 @@ inline fun <reified T> T.logw(message: String) = Log.w(T::class.java.simpleName,
 inline fun <reified T> T.loge(message: String) = Log.e(T::class.java.simpleName, message)
 
 inline fun <reified T> T.loge(message: String, error: Throwable) = Log.e(T::class.java.simpleName, message, error)
+
+inline fun <reified T> T.loge(error: Throwable) = Log.e(T::class.java.simpleName, error.message, error)

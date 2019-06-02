@@ -1,6 +1,6 @@
 package app.rtcmeetings.domain.usecase.impl
 
-import app.rtcmeetings.domain.CallUseCase
+import app.rtcmeetings.domain.usecase.CallUseCase
 import javax.inject.Inject
 
 class CallUseCaseImpl @Inject constructor() : CallUseCase {

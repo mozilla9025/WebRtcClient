@@ -1,4 +1,4 @@
-package app.rtcmeetings.domain
+package app.rtcmeetings.domain.usecase
 
 interface CallUseCase {
     fun start()

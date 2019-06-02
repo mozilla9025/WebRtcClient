@@ -41,13 +41,22 @@ class CallActivity : BaseActivity() {
 
     private fun bindCallService() {
         bindService(
-                Intent(this@CallActivity, CallService::class.java),
-                connection,
-                Context.BIND_AUTO_CREATE
+            Intent(this@CallActivity, CallService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
         )
     }
 
     private fun unbindCallService() {
         unbindService(connection)
+    }
+
+    companion object {
+        fun start(context: Context) {
+            val intent = Intent(context, CallActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
     }
 }

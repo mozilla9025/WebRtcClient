@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome back!"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/sp24"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clEmail"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <TextView
+            android:id="@+id/tvEmailHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp24"
+            android:text="Email"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintStart_toStartOf="@id/etEmail"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="@dimen/dp0"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:background="@drawable/selector_outlined_input"
+            android:inputType="textEmailAddress"
+            android:paddingStart="@dimen/dp24"
+            android:paddingTop="@dimen/dp8"
+            android:paddingEnd="@dimen/dp24"
+            android:paddingBottom="@dimen/dp8"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvEmailHeader"
+            app:layout_constraintWidth_percent="0.7" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clPassword"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clEmail">
+
+        <TextView
+            android:id="@+id/tvPasswordHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp24"
+            android:text="Password"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintStart_toStartOf="@id/etPassword"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="@dimen/dp0"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:background="@drawable/selector_outlined_input"
+            android:inputType="textPassword"
+            android:paddingStart="@dimen/dp24"
+            android:paddingTop="@dimen/dp8"
+            android:paddingEnd="@dimen/dp24"
+            android:paddingBottom="@dimen/dp8"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPasswordHeader"
+            app:layout_constraintWidth_percent="0.7" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp32"
+        android:layout_marginBottom="@dimen/dp16"
+        android:background="@drawable/selector_gradient_btn"
+        android:text="@string/log_in_fragment_btn_log_in"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clPassword"
+        app:layout_constraintWidth_percent="0.55" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

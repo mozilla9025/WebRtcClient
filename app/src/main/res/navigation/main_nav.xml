@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/main_nav"
+            app:startDestination="@id/splashScreenFragment">
+
+    <fragment android:id="@+id/splashScreenFragment"
+              android:name="app.rtcmeetings.ui.start.SplashScreenFragment"
+              android:label="SplashScreenFragment"
+              tools:layout="@layout/fragment_splash_screen">
+        <action android:id="@+id/action_splashScreenFragment_to_startFragment"
+                app:destination="@id/startFragment"/>
+        <action android:id="@+id/action_splashScreenFragment_to_mainFragment"
+                app:destination="@id/mainFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/startFragment"
+              android:name="app.rtcmeetings.ui.start.StartFragment"
+              android:label="StartFragment"
+              tools:layout="@layout/fragment_start">
+        <action android:id="@+id/action_startFragment_to_signUpFragment"
+                app:destination="@id/signUpFragment"/>
+        <action android:id="@+id/action_startFragment_to_logInFragment"
+                app:destination="@id/logInFragment"/>
+    </fragment>
+
+    <fragment android:id="@+id/signUpFragment"
+              tools:layout="@layout/fragment_signup"
+              android:name="app.rtcmeetings.ui.auth.SignUpFragment"
+              android:label="SignUpFragment"/>
+
+    <fragment android:id="@+id/logInFragment"
+              tools:layout="@layout/fragment_login"
+              android:name="app.rtcmeetings.ui.auth.LogInFragment"
+              android:label="LogInFragment"/>
+
+    <fragment android:id="@+id/mainFragment"
+              tools:layout="@layout/fragment_main"
+              android:name="app.rtcmeetings.ui.main.MainFragment"
+              android:label="MainFragment"/>
+</navigation>

@@ -9,7 +9,8 @@ import javax.inject.Singleton
 
 @Module(includes = [NetworkModule::class,
     ApiModule::class,
-    UseCaseModule::class])
+    UseCaseModule::class,
+    StorageModule::class])
 internal class AppModule {
 
     @Singleton

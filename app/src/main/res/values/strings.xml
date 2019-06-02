@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WebRtcClient</string>
+    <string name="start_fragment_btn_log_in">Log In</string>
+    <string name="start_fragment_btn_sign_up">Sign Up</string>
+    <string name="sign_up_fragment_btn_sign_up">Sign Up</string>
+    <string name="log_in_fragment_btn_log_in">Log In</string>
 </resources>

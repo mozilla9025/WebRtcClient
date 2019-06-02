@@ -17,4 +17,5 @@
     <dimen name="sp14">14sp</dimen>
     <dimen name="sp16">16sp</dimen>
     <dimen name="sp24">24sp</dimen>
+    <dimen name="dp40">40dp</dimen>
 </resources>

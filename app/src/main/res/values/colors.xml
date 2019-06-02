@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#6582ff</color>
+    <color name="colorPrimaryDark">#bbbbbb</color>
+    <color name="colorAccent">#123597</color>
 
     <color name="callGradientTop">#6582ff</color>
     <color name="callGradientBot">#123597</color>
 
+    <color name="btnGradientTop">#5b5aff</color>
+    <color name="btnGradientBot">#0908aa</color>
+    <color name="btnOutlineBlue">#2b32b2</color>
+
     <color name="white">#ffffff</color>
     <color name="green">#00bb3f</color>
     <color name="red">#ff0201</color>
-    <color name="transparent_white">#92797979</color>
+
+    <color name="lightGray">#bbbbbb</color>
+    <color name="mediumGrey">#6b6b6b</color>
+    <color name="darkGray">#505050</color>
+
+    <color name="transparent_white">#92DBDBDB</color>
 
 </resources>
