@@ -21,13 +21,51 @@
         app:layout_constraintVertical_bias="0.15" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clEmail"
+        android:id="@+id/clName"
         android:layout_width="@dimen/dp0"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <TextView
+            android:id="@+id/tvNameHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp24"
+            android:text="Name"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintStart_toStartOf="@id/etName"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="@dimen/dp0"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:background="@drawable/selector_outlined_input"
+            android:inputType="text|textPersonName"
+            android:paddingStart="@dimen/dp24"
+            android:paddingTop="@dimen/dp8"
+            android:paddingEnd="@dimen/dp24"
+            android:paddingBottom="@dimen/dp8"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvNameHeader"
+            app:layout_constraintWidth_percent="0.7" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clEmail"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clName">
 
         <TextView
             android:id="@+id/tvEmailHeader"

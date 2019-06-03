@@ -2,6 +2,9 @@ package app.rtcmeetings.di
 
 import android.app.Application
 import app.rtcmeetings.BuildConfig
+import app.rtcmeetings.data.AuthStorage
+import app.rtcmeetings.network.AccessTokenManager
+import app.rtcmeetings.network.HeaderInterceptor
 import app.rtcmeetings.util.l
 import dagger.Module
 import dagger.Provides
@@ -26,23 +29,36 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(cache: Cache): OkHttpClient =
-            OkHttpClient.Builder().apply {
-                connectTimeout(30, TimeUnit.SECONDS)
-                readTimeout(1, TimeUnit.MINUTES)
-                writeTimeout(1, TimeUnit.MINUTES)
-                cache(cache)
-                addInterceptor(HttpLoggingInterceptor()
-                        .apply { level = HttpLoggingInterceptor.Level.BODY })
-            }.build()
+    fun provideOkHttpClient(cache: Cache, headerInterceptor: HeaderInterceptor): OkHttpClient =
+        OkHttpClient.Builder().apply {
+            connectTimeout(30, TimeUnit.SECONDS)
+            readTimeout(1, TimeUnit.MINUTES)
+            writeTimeout(1, TimeUnit.MINUTES)
+            cache(cache)
+            addInterceptor(HttpLoggingInterceptor()
+                .apply { level = HttpLoggingInterceptor.Level.BODY })
+            addInterceptor(headerInterceptor)
+        }.build()
+
+    @Provides
+    @Singleton
+    fun provideHeaderInterceptor(accessTokenManager: AccessTokenManager): HeaderInterceptor {
+        return HeaderInterceptor(accessTokenManager.getAccessToken())
+    }
+
+    @Provides
+    @Singleton
+    fun provideAccessTokenManager(authStorage: AuthStorage): AccessTokenManager {
+        return AccessTokenManager(authStorage)
+    }
 
     @Provides
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit =
-            Retrofit.Builder().apply {
-                baseUrl(BuildConfig.BASE_URL)
-                addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                addConverterFactory(GsonConverterFactory.create())
-                client(client)
-            }.build()
+        Retrofit.Builder().apply {
+            baseUrl(BuildConfig.BASE_URL)
+            addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            addConverterFactory(GsonConverterFactory.create())
+            client(client)
+        }.build()
 }

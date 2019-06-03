@@ -13,11 +13,15 @@ class PreferencesImpl(private val sp: SharedPreferences) : AuthStorage {
         return Single.just(sp.getString(TOKEN_KEY, ""))
     }
 
+    override fun getRawToken(): String {
+        return sp.getString(TOKEN_KEY, "")!!
+    }
+
     override fun setToken(token: String): Completable {
         return Completable.fromAction {
             sp.edit().remove(TOKEN_KEY)
-                    .putString(TOKEN_KEY, token)
-                    .apply()
+                .putString(TOKEN_KEY, token)
+                .apply()
         }
     }
 

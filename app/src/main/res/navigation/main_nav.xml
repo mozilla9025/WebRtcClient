@@ -27,12 +27,16 @@
     <fragment android:id="@+id/signUpFragment"
               tools:layout="@layout/fragment_signup"
               android:name="app.rtcmeetings.ui.auth.SignUpFragment"
-              android:label="SignUpFragment"/>
+              android:label="SignUpFragment">
+        <action android:id="@+id/action_signUpFragment_to_logInFragment" app:destination="@id/logInFragment"/>
+    </fragment>
 
     <fragment android:id="@+id/logInFragment"
               tools:layout="@layout/fragment_login"
               android:name="app.rtcmeetings.ui.auth.LogInFragment"
-              android:label="LogInFragment"/>
+              android:label="LogInFragment">
+        <action android:id="@+id/action_logInFragment_to_mainFragment" app:destination="@id/mainFragment"/>
+    </fragment>
 
     <fragment android:id="@+id/mainFragment"
               tools:layout="@layout/fragment_main"

@@ -1,4 +1,4 @@
-package app.rtcmeetings.network
+package app.rtcmeetings.network.api
 
 import io.reactivex.Completable
 import io.reactivex.Single
