@@ -1,7 +1,7 @@
 package app.rtcmeetings.di
 
-import app.rtcmeetings.domain.usecase.respository.AuthRepository
-import app.rtcmeetings.domain.usecase.respository.impl.AuthRepositoryImpl
+import app.rtcmeetings.domain.respository.AuthRepository
+import app.rtcmeetings.domain.respository.impl.AuthRepositoryImpl
 import dagger.Binds
 import dagger.Module
 

@@ -9,4 +9,5 @@ interface AuthStorage {
     fun getToken(): Single<String>
     fun getRawToken(): String
     fun setToken(token: String): Completable
+    fun clearData(): Completable
 }

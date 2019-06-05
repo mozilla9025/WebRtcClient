@@ -20,8 +20,15 @@ class PreferencesImpl(private val sp: SharedPreferences) : AuthStorage {
     override fun setToken(token: String): Completable {
         return Completable.fromAction {
             sp.edit().remove(TOKEN_KEY)
-                .putString(TOKEN_KEY, token)
-                .apply()
+                    .putString(TOKEN_KEY, token)
+                    .apply()
+        }
+    }
+
+    override fun clearData(): Completable {
+        return Completable.fromAction {
+            sp.edit().clear()
+                    .apply()
         }
     }
 

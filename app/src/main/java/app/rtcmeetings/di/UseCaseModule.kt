@@ -1,13 +1,7 @@
 package app.rtcmeetings.di
 
-import app.rtcmeetings.domain.usecase.CallUseCase
-import app.rtcmeetings.domain.usecase.CheckAuthUseCase
-import app.rtcmeetings.domain.usecase.CreateAccountUseCase
-import app.rtcmeetings.domain.usecase.LogInUseCase
-import app.rtcmeetings.domain.usecase.impl.CallUseCaseImpl
-import app.rtcmeetings.domain.usecase.impl.CheckAuthUseCaseImpl
-import app.rtcmeetings.domain.usecase.impl.CreateAccountUseCaseImpl
-import app.rtcmeetings.domain.usecase.impl.LogInUseCaseImpl
+import app.rtcmeetings.domain.usecase.*
+import app.rtcmeetings.domain.usecase.impl.*
 import dagger.Binds
 import dagger.Module
 
@@ -25,5 +19,8 @@ interface UseCaseModule {
 
     @Binds
     fun bindLogInUseCase(useCase: LogInUseCaseImpl): LogInUseCase
+
+    @Binds
+    fun bindLogOutUseCase(useCase: LogOutUseCaseImpl): LogOutUseCase
 
 }
