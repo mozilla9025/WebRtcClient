@@ -1,6 +1,6 @@
 package app.rtcmeetings.di
 
-import app.rtcmeetings.network.api.AccountApi
+import app.rtcmeetings.network.api.UserApi
 import app.rtcmeetings.network.api.AuthApi
 import app.rtcmeetings.network.api.CallApi
 import dagger.Module
@@ -18,6 +18,6 @@ class ApiModule {
             retrofit.create(AuthApi::class.java)
 
     @Provides
-    fun provideAccountApi(retrofit: Retrofit): AccountApi =
-            retrofit.create(AccountApi::class.java)
+    fun provideAccountApi(retrofit: Retrofit): UserApi =
+            retrofit.create(UserApi::class.java)
 }

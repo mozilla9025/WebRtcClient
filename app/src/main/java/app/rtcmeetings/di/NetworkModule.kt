@@ -6,6 +6,7 @@ import app.rtcmeetings.data.AuthStorage
 import app.rtcmeetings.network.AccessTokenManager
 import app.rtcmeetings.network.HeaderInterceptor
 import app.rtcmeetings.util.l
+import app.rtcmeetings.util.logd
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
@@ -35,19 +36,17 @@ class NetworkModule {
             readTimeout(1, TimeUnit.MINUTES)
             writeTimeout(1, TimeUnit.MINUTES)
             cache(cache)
+            addInterceptor(headerInterceptor)
             addInterceptor(HttpLoggingInterceptor()
                 .apply { level = HttpLoggingInterceptor.Level.BODY })
-            addInterceptor(headerInterceptor)
         }.build()
 
     @Provides
-    @Singleton
     fun provideHeaderInterceptor(accessTokenManager: AccessTokenManager): HeaderInterceptor {
         return HeaderInterceptor(accessTokenManager.getAccessToken())
     }
 
     @Provides
-    @Singleton
     fun provideAccessTokenManager(authStorage: AuthStorage): AccessTokenManager {
         return AccessTokenManager(authStorage)
     }

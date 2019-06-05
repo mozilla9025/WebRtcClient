@@ -17,3 +17,11 @@ inline val Int.d get() = this.toDouble()
 inline val Float.d get() = this.toDouble()
 
 inline val Long.d get() = this.toDouble()
+
+inline val String.d get() = this.toDouble()
+
+inline val String.i get() = this.toInt()
+
+inline val String.l get() = this.toLong()
+
+inline val String.f get() = this.toFloat()

@@ -6,7 +6,6 @@ import app.rtcmeetings.network.api.AuthApi
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -14,6 +13,7 @@ class AuthRepositoryImpl @Inject constructor(
         private val authStorage: AuthStorage,
         private val gson: Gson
 ) : AuthRepository {
+
     override fun logIn(email: String, password: String): Completable {
         return authApi.login(email, password)
                 .map {

@@ -23,4 +23,7 @@ interface UseCaseModule {
     @Binds
     fun bindLogOutUseCase(useCase: LogOutUseCaseImpl): LogOutUseCase
 
+    @Binds
+    fun bindGetUserUseCase(useCase: GetUserUseCaseImpl): GetUserUseCase
+
 }

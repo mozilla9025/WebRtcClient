@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class LogInViewModel @Inject constructor(
-    private val loginUseCase: LogInUseCase
+        private val loginUseCase: LogInUseCase
 ) : BaseViewModel() {
 
     val loginliveData: MutableLiveData<Boolean> by lazy {
@@ -16,11 +16,13 @@ class LogInViewModel @Inject constructor(
     }
 
     fun logIn(email: String, password: String) {
-        add(
-            loginUseCase.execute(email, password)
+        add(loginUseCase.execute(email, password)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ loginliveData.value = true },
-                    { loge(it) })
+                        {
+                            loginliveData.value = false
+                            loge(it)
+                        })
         )
     }
 }
