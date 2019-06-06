@@ -3,15 +3,18 @@ package app.rtcmeetings.ui.main
 import androidx.lifecycle.MutableLiveData
 import app.rtcmeetings.base.BaseViewModel
 import app.rtcmeetings.data.entity.User
+import app.rtcmeetings.domain.usecase.CallUseCase
 import app.rtcmeetings.domain.usecase.GetUserUseCase
 import app.rtcmeetings.domain.usecase.LogOutUseCase
 import app.rtcmeetings.util.loge
+import app.rtcmeetings.util.logi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
         private val logOutUseCase: LogOutUseCase,
-        private val getUserUseCase: GetUserUseCase
+        private val getUserUseCase: GetUserUseCase,
+        private val callUseCase: CallUseCase
 ) : BaseViewModel() {
 
     val logOutLiveData: MutableLiveData<Boolean> by lazy {

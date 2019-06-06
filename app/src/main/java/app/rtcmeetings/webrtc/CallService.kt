@@ -8,13 +8,12 @@ import android.os.Build
 import android.os.IBinder
 import app.rtcmeetings.R
 import app.rtcmeetings.domain.usecase.CallUseCase
-import app.rtcmeetings.network.WsService
 import app.rtcmeetings.network.request.CallRequest
 import app.rtcmeetings.ui.CallActivity
 import app.rtcmeetings.webrtc.audio.CallAudioManager
 import app.rtcmeetings.webrtc.video.CamSide
 import app.rtcmeetings.webrtc.video.ProxyVideoSink
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
 import org.webrtc.EglBase
@@ -26,26 +25,25 @@ import javax.inject.Inject
 
 class CallService : Service(), WebRtcClientListener {
 
-    private var startTime: Long? = null
     @Inject
     lateinit var callUseCase: CallUseCase
-
+    @Inject
+    lateinit var gson: Gson
 
     lateinit var eglBase: EglBase
     var callState: CallState? = null
     var cameraSide: CamSide? = null
+    private var startTime: Long? = null
 
     //default values
     var localVideoEnabled = false
     var remoteVideoEnabled = false
     var localMicEnabled = true
-    var isLoopEnabled = false
 
     private var webRtcClient: PeerConnectionClient? = null
 
     private val executor = Executors.newSingleThreadExecutor()
     private val disposables = CompositeDisposable()
-    private val gson = GsonBuilder().create()
 
     private val localVideoSinkProxy = ProxyVideoSink()
     private val remoteVideoSinkProxy = ProxyVideoSink()
@@ -94,29 +92,29 @@ class CallService : Service(), WebRtcClientListener {
             nm.createNotificationChannel(channel)
 
             val contentIntent = PendingIntent.getActivity(
-                this, 0,
-                Intent(this, CallActivity::class.java), 0
+                    this, 0,
+                    Intent(this, CallActivity::class.java), 0
             )
             // Set the info for the views that show in the notification panel.
             return Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_accept_call)  // the status icon
-                .setWhen(System.currentTimeMillis())  // the time stamp
-                .setChannelId(channel.id)
-                .setContentTitle(getText(R.string.app_name))
-                .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
-                .build()
+                    .setSmallIcon(R.drawable.ic_accept_call)  // the status icon
+                    .setWhen(System.currentTimeMillis())  // the time stamp
+                    .setChannelId(channel.id)
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
+                    .build()
         } else {
             val contentIntent = PendingIntent.getActivity(
-                this, 0,
-                Intent(this, CallActivity::class.java), 0
+                    this, 0,
+                    Intent(this, CallActivity::class.java), 0
             )
             // Set the info for the views that show in the notification panel.
             return Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_accept_call)  // the status icon
-                .setWhen(System.currentTimeMillis())  // the time stamp
-                .setContentTitle(getText(R.string.app_name))
-                .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
-                .build()
+                    .setSmallIcon(R.drawable.ic_accept_call)  // the status icon
+                    .setWhen(System.currentTimeMillis())  // the time stamp
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
+                    .build()
         }
     }
 
@@ -177,7 +175,6 @@ class CallService : Service(), WebRtcClientListener {
         localVideoSinkProxy.target = localTarget
         remoteVideoSinkProxy.target = remoteTarget
     }
-
 
     private fun onIncomingCallReady() {
         audioManager.startIncomingRinger(true)

@@ -1,4 +1,5 @@
 package app.rtcmeetings.network.request
 
-class CallRequest {
-}
+import com.google.gson.annotations.SerializedName
+
+class CallRequest() {}

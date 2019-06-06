@@ -1,19 +1,18 @@
-package app.rtcmeetings.domain.usecase.impl
+package app.rtcmeetings.domain.respository.impl
 
 import app.rtcmeetings.domain.respository.CallRepository
-import app.rtcmeetings.domain.usecase.CallUseCase
+import app.rtcmeetings.network.api.CallApi
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class CallUseCaseImpl @Inject constructor(
-        private val callRepository: CallRepository
-) : CallUseCase {
+class CallRepositoryImpl @Inject constructor(
+        private val callApi: CallApi
+) : CallRepository {
 
     override fun startCall(socketId: String, sdp: String, userId: Int): Single<String> {
-        return callRepository.startCall(socketId, sdp, userId)
-                .subscribeOn(Schedulers.io())
+        return callApi.startCall(socketId, sdp, userId)
+                .map { return@map it.body()?.string() }
     }
 
     override fun getIncomingCall(): Single<String> {

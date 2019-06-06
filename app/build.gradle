@@ -23,12 +23,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BASE_URL", '\"https://webrtc.edeployments.com\"')
+            buildConfigField("String", "WS_URL", '\"ws://webrtc.edeployments.com\"')
         }
 
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BASE_URL", '\"https://webrtc.edeployments.com\"')
+            buildConfigField("String", "WS_URL", '\"ws://webrtc.edeployments.com\"')
             applicationIdSuffix ".debug"
         }
     }

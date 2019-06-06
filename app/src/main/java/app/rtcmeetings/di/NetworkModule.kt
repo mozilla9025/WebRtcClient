@@ -29,7 +29,6 @@ class NetworkModule {
     }
 
     @Provides
-    @Singleton
     fun provideOkHttpClient(cache: Cache, headerInterceptor: HeaderInterceptor): OkHttpClient =
         OkHttpClient.Builder().apply {
             connectTimeout(30, TimeUnit.SECONDS)
@@ -52,7 +51,6 @@ class NetworkModule {
     }
 
     @Provides
-    @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit =
         Retrofit.Builder().apply {
             baseUrl(BuildConfig.BASE_URL)

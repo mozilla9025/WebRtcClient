@@ -10,8 +10,6 @@ import androidx.navigation.Navigation
 import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseFragment
 import app.rtcmeetings.util.i
-import app.rtcmeetings.util.loge
-import app.rtcmeetings.util.logi
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_main.*
 import javax.inject.Inject
@@ -43,15 +41,11 @@ class MainFragment : BaseFragment() {
             }
         })
 
-        viewModel.userLiveData.observe(viewLifecycleOwner, Observer { user ->
-            user?.let { logi("User: $user") }
-                    ?: loge("User not found")
-        })
-
         btnStartCall.setOnClickListener {
             etId.text?.let {
-                if (it.isNotBlank())
+                if (it.isNotBlank() && !it.contains("^[a-zA-Z]*\$"))
                     viewModel.getUser(it.toString().i)
+                else Toast.makeText(context!!, "ID has wrong type", Toast.LENGTH_SHORT).show()
             }
         }
 

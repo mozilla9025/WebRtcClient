@@ -53,7 +53,7 @@
                 android:name=".ui.CallActivity"
                 android:launchMode="singleTop"/>
 
-        <service android:name=".network.WsService"/>
+        <service android:name=".network.ws.WsService"/>
         <service android:name=".webrtc.CallService"/>
 
     </application>
