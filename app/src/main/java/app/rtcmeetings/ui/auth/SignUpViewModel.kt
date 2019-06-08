@@ -11,7 +11,7 @@ class SignUpViewModel @Inject constructor(
     private val createAccountUseCase: CreateAccountUseCase
 ) : BaseViewModel() {
 
-    val signInLiveData: MutableLiveData<Boolean> by lazy {
+    val signUpLiveData: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
 
@@ -19,8 +19,8 @@ class SignUpViewModel @Inject constructor(
         add(
             createAccountUseCase.execute(email, name, password)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ signInLiveData.value = true }, {
-                    signInLiveData.value = false
+                .subscribe({ signUpLiveData.value = true }, {
+                    signUpLiveData.value = false
                     loge(it)
                 })
         )

@@ -11,7 +11,7 @@ class CallUseCaseImpl @Inject constructor(
         private val callRepository: CallRepository
 ) : CallUseCase {
 
-    override fun startCall(socketId: String, sdp: String, userId: Int): Single<String> {
+    override fun startCall(socketId: String, sdp: String, userId: Int): Single<Int> {
         return callRepository.startCall(socketId, sdp, userId)
                 .subscribeOn(Schedulers.io())
     }
@@ -20,23 +20,23 @@ class CallUseCaseImpl @Inject constructor(
         TODO()
     }
 
-    override fun cancelCall(callId: String): Completable {
-        TODO()
-
+    override fun cancelCall(callId: Int): Completable {
+        return callRepository.cancelCall(callId)
+                .subscribeOn(Schedulers.io())
     }
 
     override fun acceptCall(callId: Int, sdp: String, socketId: String): Completable {
-        TODO()
-
+        return callRepository.acceptCall(callId, sdp, socketId)
+                .subscribeOn(Schedulers.io())
     }
 
-    override fun declineCall(callId: String): Completable {
-        TODO()
-
+    override fun declineCall(callId: Int): Completable {
+        return callRepository.declineCall(callId)
+                .subscribeOn(Schedulers.io())
     }
 
-    override fun finishCall(callId: String): Completable {
-        TODO()
-
+    override fun finishCall(callId: Int): Completable {
+        return callRepository.finishCall(callId)
+                .subscribeOn(Schedulers.io())
     }
 }

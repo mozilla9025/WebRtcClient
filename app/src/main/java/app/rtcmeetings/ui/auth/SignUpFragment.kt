@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseFragment
-import app.rtcmeetings.util.logi
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_signup.*
 import javax.inject.Inject
@@ -25,16 +24,20 @@ class SignUpFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_signup, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.signInLiveData.observe(viewLifecycleOwner, Observer {
-            logi("$it")
+        viewModel.signUpLiveData.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                true -> Navigation.findNavController(view)
+                        .navigate(SignUpFragmentDirections.actionSignUpFragmentToLogInFragment())
+                else -> Toast.makeText(context!!, "Register error", Toast.LENGTH_SHORT).show()
+            }
         })
 
         btnSignUp.setOnClickListener {

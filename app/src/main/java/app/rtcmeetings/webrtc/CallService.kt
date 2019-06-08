@@ -7,13 +7,17 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import app.rtcmeetings.R
+import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.domain.usecase.CallUseCase
 import app.rtcmeetings.network.request.CallRequest
+import app.rtcmeetings.network.ws.WsEvent
+import app.rtcmeetings.network.ws.WsService
 import app.rtcmeetings.ui.CallActivity
 import app.rtcmeetings.webrtc.audio.CallAudioManager
 import app.rtcmeetings.webrtc.video.CamSide
 import app.rtcmeetings.webrtc.video.ProxyVideoSink
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
 import org.webrtc.EglBase
@@ -33,8 +37,14 @@ class CallService : Service(), WebRtcClientListener {
     lateinit var eglBase: EglBase
     var callState: CallState? = null
     var cameraSide: CamSide? = null
-    private var startTime: Long? = null
+    var interlocutor: User? = null
 
+    private var startTime: Long? = null
+    private var socketId: String? = null
+    private var callId: Int? = null
+    private var remoteOffer: String? = null
+
+    private var finishing = false
     //default values
     var localVideoEnabled = false
     var remoteVideoEnabled = false
@@ -60,7 +70,15 @@ class CallService : Service(), WebRtcClientListener {
     private var answerSdpSat = false
 
     private lateinit var audioManager: CallAudioManager
-    private lateinit var remoteOffer: CallRequest
+
+    fun setCallEventListener(listener: CallEventListener?) {
+        callEventListener = listener
+    }
+
+    fun setTargets(localTarget: VideoSink, remoteTarget: VideoSink) {
+        localVideoSinkProxy.target = localTarget
+        remoteVideoSinkProxy.target = remoteTarget
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return binder
@@ -82,55 +100,28 @@ class CallService : Service(), WebRtcClientListener {
         executor.shutdown()
     }
 
-    //TODO remove this function & replace calls by NotificationManager
-    private fun getNotification(): Notification {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("qwe", "qwerty", NotificationManager.IMPORTANCE_DEFAULT)
-            // The PendingIntent to launch our activity if the user selects this notification
-
-            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            nm.createNotificationChannel(channel)
-
-            val contentIntent = PendingIntent.getActivity(
-                    this, 0,
-                    Intent(this, CallActivity::class.java), 0
-            )
-            // Set the info for the views that show in the notification panel.
-            return Notification.Builder(this)
-                    .setSmallIcon(R.drawable.ic_accept_call)  // the status icon
-                    .setWhen(System.currentTimeMillis())  // the time stamp
-                    .setChannelId(channel.id)
-                    .setContentTitle(getText(R.string.app_name))
-                    .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
-                    .build()
-        } else {
-            val contentIntent = PendingIntent.getActivity(
-                    this, 0,
-                    Intent(this, CallActivity::class.java), 0
-            )
-            // Set the info for the views that show in the notification panel.
-            return Notification.Builder(this)
-                    .setSmallIcon(R.drawable.ic_accept_call)  // the status icon
-                    .setWhen(System.currentTimeMillis())  // the time stamp
-                    .setContentTitle(getText(R.string.app_name))
-                    .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
-                    .build()
-        }
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         executor.execute {
             when (intent?.action) {
-                ACTION_START_OUTGOING_CALL -> handleStartOutgoingCall(intent)
-                ACTION_START_INCOMING_CALL -> handleStartIncomingCall(intent)
-                ACTION_ACCEPT_INCOMING_CALL -> handleAcceptIncomingCall()
-                ACTION_DECLINE_INCOMING_CALL -> handleDeclineIncomingCall()
-                ACTION_CANCEL_OUTGOING_CALL -> handleCancelOutgoingCall()
-                ACTION_LOCAL_SWITCH_CAMERA -> handleLocalSwitchCamera()
-                ACTION_LOCAL_TOGGLE_CAMERA -> handleLocalToggleCamera()
-                ACTION_LOCAL_TOGGLE_MICROPHONE -> handleLocalToggleMicrophone()
+                ACTION_OUTGOING_CALL -> handleStartOutgoingCall(intent)
+                ACTION_INCOMING_CALL -> handleStartIncomingCall(intent)
+
+                ACTION_LOCAL_ACCEPT -> handleAcceptIncomingCall()
+                ACTION_LOCAL_DECLINE -> handleDeclineIncomingCall()
+                ACTION_LOCAL_CANCEL -> handleCancelOutgoingCall()
+                ACTION_LOCAL_FINISH -> handleFinishCall()
+                ACTION_LOCAL_VIDEO_TOGGLE -> handleLocalToggleCamera()
                 ACTION_STOP_INCOMING_RINGER -> handleStopIncomingRinger()
-                ACTION_FINISH_CALL -> handleFinishCall()
+                ACTION_LOCAL_SWITCH_CAMERA -> handleLocalSwitchCamera()
+                ACTION_LOCAL_TOGGLE_MICROPHONE -> handleLocalToggleMicrophone()
+
+                ACTION_REMOTE_ACCEPTED -> handleRemoteAccept(intent)
+                ACTION_REMOTE_DECLINE -> handleRemoteDecline(intent)
+                ACTION_REMOTE_CANCEL -> handleRemoteCancel(intent)
+                ACTION_REMOTE_FINISH -> handleRemoteFinish(intent)
+                ACTION_REMOTE_ICE -> handleRemoteIceCandidate(intent)
+                ACTION_REMOTE_VIDEO_TOGGLE -> handleRemoteVideoToggle(intent)
+
                 ACTION_TERMINATE -> handleTerminate()
             }
         }
@@ -138,14 +129,44 @@ class CallService : Service(), WebRtcClientListener {
         return START_NOT_STICKY
     }
 
-    override fun onIceCandidate(iceCandidate: IceCandidate) {
+    override fun onIceCandidate(candidate: IceCandidate) {
+        if (callState != CallState.CONNECTED)
+            addLocalCandidate(candidate)
+        else
+            sendIceCandidate(candidate)
     }
 
     override fun onAnswerGenerated(sdp: SessionDescription) {
         answerSdpSat = true
+        disposables.add(
+                callUseCase.acceptCall(callId!!, sdp.description, socketId!!)
+                        .subscribe({
+                            sendLocalIceCandidates()
+                        }, {
+                            callEventListener?.onFail()
+                            clearAndFinish()
+                        })
+        )
     }
 
     override fun onOfferGenerated(sdp: SessionDescription) {
+        disposables.add(
+                callUseCase.startCall(
+                        socketId!!,
+                        sdp.description,
+                        interlocutor?.id!!
+                ).subscribe({ id ->
+                    callId = id
+                    callState = CallState.CONNECTING
+                    callEventListener?.onCreatingConnection()
+                }, {
+                    finishing = true
+                    callState = CallState.FAILED
+                    disposables.clear()
+                    callEventListener?.onFail()
+                    CallEvent.terminate(this@CallService)
+                })
+        )
     }
 
     override fun onConnected() {
@@ -158,43 +179,31 @@ class CallService : Service(), WebRtcClientListener {
     }
 
     override fun onDisconnected() {
+        if (finishing) return
         callEventListener?.onDisconnect()
-        ServiceActionHelper.terminate(this@CallService)
+        clearAndFinish()
     }
 
     override fun onFailed() {
         callEventListener?.onFail()
-        ServiceActionHelper.terminate(this@CallService)
-    }
-
-    fun setCallEventListener(listener: CallEventListener?) {
-        callEventListener = listener
-    }
-
-    fun setTargets(localTarget: VideoSink, remoteTarget: VideoSink) {
-        localVideoSinkProxy.target = localTarget
-        remoteVideoSinkProxy.target = remoteTarget
-    }
-
-    private fun onIncomingCallReady() {
-        audioManager.startIncomingRinger(true)
-        CallActivity.start(this@CallService)
-    }
-
-    private fun onOutgoingCallReady() {
-        initWebRtc()
-        webRtcClient?.createOffer()
+        CallEvent.terminate(this@CallService)
     }
 
     private fun handleStartIncomingCall(intent: Intent) {
         if (phoneState == PhoneState.BUSY) return
 
+        socketId = intent.getStringExtra(EXTRA_SOCKET_ID)
+        val extras = intent.getStringExtra(EXTRA_STRING)
+        val json = gson.fromJson(extras, JsonObject::class.java)
+
+        interlocutor = gson.fromJson<User>(json.get("account").asJsonObject, User::class.java)
+        remoteOffer = json.get("initSDP").asString
+        callId = json.get("id").asInt
+
         phoneState = PhoneState.BUSY
         callState = CallState.INCOMING_PENDING
-
-
-        onIncomingCallReady()
-
+        audioManager.startIncomingRinger(true)
+        CallActivity.start(this@CallService)
     }
 
     private fun handleStartOutgoingCall(intent: Intent) {
@@ -202,27 +211,102 @@ class CallService : Service(), WebRtcClientListener {
 
         phoneState = PhoneState.BUSY
         callState = CallState.OUTGOING_PENDING
+        interlocutor = intent.getParcelableExtra(EXTRA_USER)
+        socketId = intent.getStringExtra(EXTRA_STRING)
 
-        onOutgoingCallReady()
+        initWebRtc()
+        webRtcClient?.createOffer()
         CallActivity.start(this@CallService)
     }
 
     private fun handleAcceptIncomingCall() {
         initWebRtc()
+        webRtcClient?.setRemoteSdp(SessionDescription(SessionDescription.Type.OFFER, remoteOffer))
         webRtcClient?.createAnswer()
     }
 
     private fun handleDeclineIncomingCall() {
         audioManager.stopIncomingRinger()
-        ServiceActionHelper.terminate(this)
+        callId?.let {
+            disposables.add(callUseCase.declineCall(it)
+                    .subscribe({ clearAndFinish() },
+                            { clearAndFinish() }))
+        } ?: clearAndFinish()
     }
 
     private fun handleCancelOutgoingCall() {
-        ServiceActionHelper.terminate(this)
+        callId?.let {
+            disposables.add(callUseCase.cancelCall(it)
+                    .subscribe({ clearAndFinish() },
+                            { clearAndFinish() }))
+        } ?: clearAndFinish()
     }
 
     private fun handleFinishCall() {
-        ServiceActionHelper.terminate(this)
+        callId?.let {
+            disposables.add(callUseCase.finishCall(it)
+                    .subscribe({ clearAndFinish() },
+                            { clearAndFinish() })
+            )
+        } ?: clearAndFinish()
+    }
+
+    private fun handleRemoteAccept(intent: Intent) {
+        if (callId == null) {
+            callEventListener?.onFail()
+            clearAndFinish()
+        }
+
+        val extras = intent.getStringExtra(EXTRA_STRING)
+        val json = gson.fromJson(extras, JsonObject::class.java)
+        val id = json.get("id").asInt
+        val sdp = json.get("targetSDP").asString
+
+        if (id == callId) {
+            webRtcClient?.setRemoteSdp(SessionDescription(SessionDescription.Type.ANSWER, sdp))
+            sendLocalIceCandidates()
+        }
+    }
+
+    private fun handleRemoteDecline(intent: Intent) {
+        val extras = intent.getStringExtra(EXTRA_STRING)
+
+        val id = gson.fromJson(extras, JsonObject::class.java).get("id").asInt
+
+        if (callId == id || callId == null) {
+            callEventListener?.onFinish()
+            clearAndFinish()
+        }
+    }
+
+    private fun handleRemoteCancel(intent: Intent) {
+        val extras = intent.getStringExtra(EXTRA_STRING)
+
+        val id = gson.fromJson(extras, JsonObject::class.java).get("id").asInt
+
+        if (callId == id || callId == null) {
+            callEventListener?.onFinish()
+            clearAndFinish()
+        }
+    }
+
+    private fun handleRemoteFinish(intent: Intent) {
+        val extras = intent.getStringExtra(EXTRA_STRING)
+
+        val id = gson.fromJson(extras, JsonObject::class.java).get("id").asInt
+
+        if (callId == id || callId == null) {
+            callEventListener?.onFinish()
+            clearAndFinish()
+        }
+    }
+
+    private fun handleRemoteIceCandidate(intent: Intent) {
+
+    }
+
+    private fun handleRemoteVideoToggle(intent: Intent) {
+
     }
 
     private fun handleTerminate() {
@@ -236,11 +320,43 @@ class CallService : Service(), WebRtcClientListener {
         stopSelf()
     }
 
-    private fun initWebRtc() {
-        webRtcClient = PeerConnectionClient.getInstance(this, eglBase, localVideoSinkProxy, remoteVideoSinkProxy)
-        webRtcClient!!.webRtcClientListener = this
+    private fun clearAndFinish() {
+        if (finishing) return
+
+        finishing = true
+        disposables.clear()
+        CallEvent.terminate(this@CallService)
     }
 
+    private fun sendIceCandidate(iceCandidate: IceCandidate) {
+        if (interlocutor == null) {
+            callEventListener?.onFail()
+            clearAndFinish()
+            return
+        }
+
+        val callRequest = CallRequest().apply {
+            userId = interlocutor!!.id
+            event = WsEvent.ICE_EXCHANGE
+            payload = iceCandidate.toString()
+        }
+        WsService.emit(this@CallService, gson.toJson(callRequest))
+    }
+
+    private fun sendLocalIceCandidates() {
+        iceCandidateList.forEach { sendIceCandidate(it) }
+        iceCandidateList.clear()
+    }
+
+    private fun initWebRtc() {
+        webRtcClient = PeerConnectionClient.getInstance(
+                applicationContext,
+                eglBase,
+                localVideoSinkProxy,
+                remoteVideoSinkProxy
+        )
+        webRtcClient!!.webRtcClientListener = this
+    }
 
     private fun handleLocalSwitchCamera() {
         val side = webRtcClient?.switchCamera()
@@ -263,9 +379,44 @@ class CallService : Service(), WebRtcClientListener {
         audioManager.stopIncomingRinger()
     }
 
-
     private fun addLocalCandidate(iceCandidate: IceCandidate) {
         iceCandidateList.add(iceCandidate)
+    }
+
+    private fun getNotification(): Notification {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel("call", "WebRtcCall", NotificationManager.IMPORTANCE_DEFAULT)
+                    .apply {
+                        importance = NotificationManager.IMPORTANCE_DEFAULT
+                        enableVibration(false)
+                    }
+
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            nm.createNotificationChannel(channel)
+
+            val contentIntent = PendingIntent.getActivity(
+                    this, 0,
+                    Intent(this, CallActivity::class.java), 0
+            )
+            return Notification.Builder(this)
+                    .setSmallIcon(R.drawable.ic_accept_call)
+                    .setWhen(System.currentTimeMillis())
+                    .setChannelId(channel.id)
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentIntent(contentIntent)
+                    .build()
+        } else {
+            val contentIntent = PendingIntent.getActivity(
+                    this, 0,
+                    Intent(this, CallActivity::class.java), 0
+            )
+            return Notification.Builder(this)
+                    .setSmallIcon(R.drawable.ic_accept_call)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentIntent(contentIntent)
+                    .build()
+        }
     }
 
     internal enum class PhoneState {
@@ -278,12 +429,17 @@ class CallService : Service(), WebRtcClientListener {
     }
 
     companion object {
-        const val ACTION_START_OUTGOING_CALL = "action_start_outgoing_call"
-        const val ACTION_START_INCOMING_CALL = "action_start_incoming_call"
-        const val ACTION_ACCEPT_INCOMING_CALL = "action_accept_incoming_call"
-        const val ACTION_DECLINE_INCOMING_CALL = "action_decline_incoming_call"
-        const val ACTION_CANCEL_OUTGOING_CALL = "action_cancel_outgoing_call"
-        const val ACTION_FINISH_CALL = "action_finish_active_call"
+        const val ACTION_OUTGOING_CALL = "action_outgoing_call"
+        const val ACTION_INCOMING_CALL = "action_incoming_call"
+
+        const val ACTION_LOCAL_ACCEPT = "action_accept_incoming_call"
+        const val ACTION_LOCAL_DECLINE = "action_decline_incoming_call"
+        const val ACTION_LOCAL_CANCEL = "action_cancel_outgoing_call"
+        const val ACTION_LOCAL_FINISH = "action_finish_active_call"
+        const val ACTION_LOCAL_VIDEO_TOGGLE = "action_video_toggle"
+        const val ACTION_STOP_INCOMING_RINGER = "action_stop_incoming_ringer"
+        const val ACTION_LOCAL_SWITCH_CAMERA = "action_local_switch_camera"
+        const val ACTION_LOCAL_TOGGLE_MICROPHONE = "action_local_toggle_microphone"
 
         const val ACTION_REMOTE_ACCEPTED = "action_remote_call_accept"
         const val ACTION_REMOTE_DECLINE = "action_remote_call_decline"
@@ -292,13 +448,10 @@ class CallService : Service(), WebRtcClientListener {
         const val ACTION_REMOTE_ICE = "action_remote_ice_candidate"
         const val ACTION_REMOTE_VIDEO_TOGGLE = "action_remote_video_toggle"
 
-        const val ACTION_LOCAL_SWITCH_CAMERA = "action_local_switch_camera"
-        const val ACTION_LOCAL_TOGGLE_CAMERA = "action_local_toggle_camera"
-        const val ACTION_LOCAL_TOGGLE_MICROPHONE = "action_local_toggle_microphone"
-        const val ACTION_STOP_INCOMING_RINGER = "action_stop_incoming_ringer"
-
         const val ACTION_TERMINATE = "action_terminate"
 
         const val EXTRA_STRING = "call_extra_string_value"
+        const val EXTRA_SOCKET_ID = "call_extra_socket_id"
+        const val EXTRA_USER = "call_extra_user"
     }
 }

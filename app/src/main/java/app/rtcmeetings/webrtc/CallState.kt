@@ -5,5 +5,6 @@ enum class CallState {
     INCOMING_PENDING,
     OUTGOING_PENDING,
     CONNECTING,
-    CONNECTED
+    CONNECTED,
+    FAILED
 }

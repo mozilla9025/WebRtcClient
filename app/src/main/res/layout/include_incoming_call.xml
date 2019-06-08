@@ -10,7 +10,7 @@
     tools:ignore="ContentDescription">
 
     <TextView
-        android:id="@+id/tvName"
+        android:id="@+id/tvNameIncoming"
         android:layout_width="@dimen/dp0"
         android:layout_height="wrap_content"
         android:gravity="center"
