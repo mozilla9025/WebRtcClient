@@ -22,12 +22,13 @@ class MainFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
+        viewModel.startWsService(context!!)
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
@@ -36,7 +37,7 @@ class MainFragment : BaseFragment() {
         viewModel.logOutLiveData.observe(viewLifecycleOwner, Observer {
             when {
                 it -> Navigation.findNavController(view)
-                        .navigate(MainFragmentDirections.actionMainFragmentToSplashScreenFragment())
+                    .navigate(MainFragmentDirections.actionMainFragmentToSplashScreenFragment())
                 else -> Toast.makeText(context!!, "Unable to log out", Toast.LENGTH_SHORT).show()
             }
         })
@@ -49,12 +50,14 @@ class MainFragment : BaseFragment() {
             }
         }
 
-        btnLogOut.setOnClickListener { viewModel.logOut() }
+        btnLogOut.setOnClickListener {
+            viewModel.disconnectWs(context!!)
+            viewModel.logOut()
+        }
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
         activity?.finish()
     }
-
 }

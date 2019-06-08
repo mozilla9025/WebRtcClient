@@ -4,8 +4,9 @@ import io.socket.client.IO
 import io.socket.client.Socket
 import java.net.URISyntaxException
 
-class WsClient(host: String,
-               query: SocketQuery
+class WsClient(
+    host: String,
+    query: SocketQuery
 ) : AbstractSocketClient(host) {
 
     init {
@@ -32,7 +33,7 @@ class WsClient(host: String,
         socket = null
     }
 
-    override fun getSocket():Socket? {
+    override fun getSocket(): Socket? {
         return socket
     }
 

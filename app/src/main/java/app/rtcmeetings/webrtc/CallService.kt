@@ -278,20 +278,27 @@ class CallService : Service(), WebRtcClientListener {
     }
 
     companion object {
-        internal const val ACTION_START_OUTGOING_CALL = "action_start_outgoing_call"
-        internal const val ACTION_START_INCOMING_CALL = "action_start_incoming_call"
-        internal const val ACTION_ACCEPT_INCOMING_CALL = "action_accept_incoming_call"
-        internal const val ACTION_DECLINE_INCOMING_CALL = "action_decline_incoming_call"
-        internal const val ACTION_CANCEL_OUTGOING_CALL = "action_cancel_outgoing_call"
-        internal const val ACTION_FINISH_CALL = "action_finish_active_call"
+        const val ACTION_START_OUTGOING_CALL = "action_start_outgoing_call"
+        const val ACTION_START_INCOMING_CALL = "action_start_incoming_call"
+        const val ACTION_ACCEPT_INCOMING_CALL = "action_accept_incoming_call"
+        const val ACTION_DECLINE_INCOMING_CALL = "action_decline_incoming_call"
+        const val ACTION_CANCEL_OUTGOING_CALL = "action_cancel_outgoing_call"
+        const val ACTION_FINISH_CALL = "action_finish_active_call"
 
-        internal const val ACTION_LOCAL_SWITCH_CAMERA = "action_local_switch_camera"
-        internal const val ACTION_LOCAL_TOGGLE_CAMERA = "action_local_toggle_camera"
-        internal const val ACTION_LOCAL_TOGGLE_MICROPHONE = "action_local_toggle_microphone"
-        internal const val ACTION_STOP_INCOMING_RINGER = "action_stop_incoming_ringer"
+        const val ACTION_REMOTE_ACCEPTED = "action_remote_call_accept"
+        const val ACTION_REMOTE_DECLINE = "action_remote_call_decline"
+        const val ACTION_REMOTE_CANCEL = "action_remote_call_cancel"
+        const val ACTION_REMOTE_FINISH = "action_remote_call_finish"
+        const val ACTION_REMOTE_ICE = "action_remote_ice_candidate"
+        const val ACTION_REMOTE_VIDEO_TOGGLE = "action_remote_video_toggle"
 
-        internal const val ACTION_TERMINATE = "action_terminate"
+        const val ACTION_LOCAL_SWITCH_CAMERA = "action_local_switch_camera"
+        const val ACTION_LOCAL_TOGGLE_CAMERA = "action_local_toggle_camera"
+        const val ACTION_LOCAL_TOGGLE_MICROPHONE = "action_local_toggle_microphone"
+        const val ACTION_STOP_INCOMING_RINGER = "action_stop_incoming_ringer"
 
-        internal const val EXTRA_STRING = "call_extra_string_value"
+        const val ACTION_TERMINATE = "action_terminate"
+
+        const val EXTRA_STRING = "call_extra_string_value"
     }
 }
