@@ -10,6 +10,7 @@ import app.rtcmeetings.R
 import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.domain.usecase.CallUseCase
 import app.rtcmeetings.network.request.CallRequest
+import app.rtcmeetings.network.request.IceExchange
 import app.rtcmeetings.network.ws.WsEvent
 import app.rtcmeetings.network.ws.WsService
 import app.rtcmeetings.ui.CallActivity
@@ -45,10 +46,6 @@ class CallService : Service(), WebRtcClientListener {
     private var remoteOffer: String? = null
 
     private var finishing = false
-    //default values
-    var localVideoEnabled = false
-    var remoteVideoEnabled = false
-    var localMicEnabled = true
 
     private var webRtcClient: PeerConnectionClient? = null
 
@@ -73,6 +70,10 @@ class CallService : Service(), WebRtcClientListener {
 
     fun setCallEventListener(listener: CallEventListener?) {
         callEventListener = listener
+    }
+
+    fun setDeviceEventListener(listener: DeviceEventListener?) {
+        deviceEventListener = listener
     }
 
     fun setTargets(localTarget: VideoSink, remoteTarget: VideoSink) {
@@ -110,8 +111,10 @@ class CallService : Service(), WebRtcClientListener {
                 ACTION_LOCAL_DECLINE -> handleDeclineIncomingCall()
                 ACTION_LOCAL_CANCEL -> handleCancelOutgoingCall()
                 ACTION_LOCAL_FINISH -> handleFinishCall()
-                ACTION_LOCAL_VIDEO_TOGGLE -> handleLocalToggleCamera()
+
                 ACTION_STOP_INCOMING_RINGER -> handleStopIncomingRinger()
+
+                ACTION_LOCAL_VIDEO_TOGGLE -> handleLocalToggleCamera()
                 ACTION_LOCAL_SWITCH_CAMERA -> handleLocalSwitchCamera()
                 ACTION_LOCAL_TOGGLE_MICROPHONE -> handleLocalToggleMicrophone()
 
@@ -141,8 +144,11 @@ class CallService : Service(), WebRtcClientListener {
         disposables.add(
                 callUseCase.acceptCall(callId!!, sdp.description, socketId!!)
                         .subscribe({
+                            callState = CallState.INCOMING_CONNECTING
+                            callEventListener?.onCreatingConnection()
                             sendLocalIceCandidates()
                         }, {
+                            callState = CallState.FAILED
                             callEventListener?.onFail()
                             clearAndFinish()
                         })
@@ -157,12 +163,10 @@ class CallService : Service(), WebRtcClientListener {
                         interlocutor?.id!!
                 ).subscribe({ id ->
                     callId = id
-                    callState = CallState.CONNECTING
+                    callState = CallState.OUTGOING_CONNECTING
                     callEventListener?.onCreatingConnection()
                 }, {
-                    finishing = true
                     callState = CallState.FAILED
-                    disposables.clear()
                     callEventListener?.onFail()
                     CallEvent.terminate(this@CallService)
                 })
@@ -302,11 +306,19 @@ class CallService : Service(), WebRtcClientListener {
     }
 
     private fun handleRemoteIceCandidate(intent: Intent) {
-
+        val extras = intent.getStringExtra(EXTRA_STRING)
+        val exchange = gson.fromJson<IceExchange>(extras, IceExchange::class.java)
+        val candidate = IceCandidate(exchange.sdpMid, exchange.mLineIndex, exchange.sdp)
+        webRtcClient?.addIceCandidate(candidate)
     }
 
     private fun handleRemoteVideoToggle(intent: Intent) {
-
+        val extras = intent.getStringExtra(EXTRA_STRING)
+        val enabled = gson.fromJson<Boolean>(extras, Boolean::class.java)
+        if (enabled)
+            callEventListener?.onRemoteUserStartStream()
+        else
+            callEventListener?.onRemoteUserStopStream()
     }
 
     private fun handleTerminate() {
@@ -314,7 +326,9 @@ class CallService : Service(), WebRtcClientListener {
 
         disposables.clear()
         startTime = null
+        iceCandidateList.clear()
         webRtcClient?.cleanUp()
+        webRtcClient = null
         audioManager.stop(false)
         stopForeground(true)
         stopSelf()
@@ -338,7 +352,11 @@ class CallService : Service(), WebRtcClientListener {
         val callRequest = CallRequest().apply {
             userId = interlocutor!!.id
             event = WsEvent.ICE_EXCHANGE
-            payload = iceCandidate.toString()
+            payload = gson.toJson(IceExchange(
+                    iceCandidate.sdpMid,
+                    iceCandidate.sdpMLineIndex,
+                    iceCandidate.sdp
+            ))
         }
         WsService.emit(this@CallService, gson.toJson(callRequest))
     }
@@ -359,20 +377,28 @@ class CallService : Service(), WebRtcClientListener {
     }
 
     private fun handleLocalSwitchCamera() {
-        val side = webRtcClient?.switchCamera()
-        side?.let {
+        webRtcClient?.switchCamera()?.let {
             cameraSide = it
             deviceEventListener?.onCamSwitch(it)
         }
     }
 
     private fun handleLocalToggleCamera() {
-
+        webRtcClient?.toggleCam()?.let {
+            deviceEventListener?.onCamToggle(it)
+            val callRequest = CallRequest().apply {
+                userId = interlocutor!!.id
+                event = WsEvent.VIDEO_TOGGLE
+                payload = gson.toJson(it)
+            }
+            WsService.emit(this@CallService, gson.toJson(callRequest))
+        }
     }
 
     private fun handleLocalToggleMicrophone() {
-        localMicEnabled = webRtcClient?.toggleMic()!!
-        deviceEventListener?.onMicToggle(localMicEnabled)
+        webRtcClient?.toggleMic()?.let {
+            deviceEventListener?.onMicToggle(it)
+        }
     }
 
     private fun handleStopIncomingRinger() {

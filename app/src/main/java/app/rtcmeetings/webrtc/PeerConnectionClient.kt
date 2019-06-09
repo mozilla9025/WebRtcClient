@@ -14,10 +14,10 @@ import org.webrtc.audio.AudioDeviceModule
 import org.webrtc.audio.JavaAudioDeviceModule
 
 class PeerConnectionClient private constructor(
-    private val appContext: Context,
-    private val rootEglBase: EglBase,
-    private val localVideoSink: VideoSink,
-    private val remoteVideoSink: VideoSink
+        private val appContext: Context,
+        private val rootEglBase: EglBase,
+        private val localVideoSink: VideoSink,
+        private val remoteVideoSink: VideoSink
 ) {
 
     var webRtcClientListener: WebRtcClientListener? = null
@@ -52,8 +52,8 @@ class PeerConnectionClient private constructor(
     private var remoteSdpSat = false
 
     private val javaAudioDeviceModule: AudioDeviceModule =
-        JavaAudioDeviceModule.builder(appContext)
-            .createAudioDeviceModule()
+            JavaAudioDeviceModule.builder(appContext)
+                    .createAudioDeviceModule()
 
     private val pcObserver = object : PeerConnection.Observer {
 
@@ -166,22 +166,22 @@ class PeerConnectionClient private constructor(
     private fun createPeerConnection() {
 
         val iceServers = listOf(
-            PeerConnection.IceServer
-                .builder("stun:stun1.l.google.com:19302")
-                .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
-                .createIceServer(),
-            PeerConnection.IceServer
-                .builder("stun:stun2.l.google.com:19302")
-                .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
-                .createIceServer(),
-            PeerConnection.IceServer
-                .builder("stun:stun3.l.google.com:19302")
-                .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
-                .createIceServer(),
-            PeerConnection.IceServer
-                .builder("stun:stun4.l.google.com:19302")
-                .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
-                .createIceServer()
+                PeerConnection.IceServer
+                        .builder("stun:stun1.l.google.com:19302")
+                        .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
+                        .createIceServer(),
+                PeerConnection.IceServer
+                        .builder("stun:stun2.l.google.com:19302")
+                        .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
+                        .createIceServer(),
+                PeerConnection.IceServer
+                        .builder("stun:stun3.l.google.com:19302")
+                        .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
+                        .createIceServer(),
+                PeerConnection.IceServer
+                        .builder("stun:stun4.l.google.com:19302")
+                        .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
+                        .createIceServer()
         )
 
         val rtcConfig = PeerConnection.RTCConfiguration(iceServers).apply {
@@ -234,8 +234,8 @@ class PeerConnectionClient private constructor(
 
     private fun createPeerConnectionFactory() {
         PeerConnectionFactory.initialize(
-            PeerConnectionFactory.InitializationOptions.builder(appContext)
-                .createInitializationOptions()
+                PeerConnectionFactory.InitializationOptions.builder(appContext)
+                        .createInitializationOptions()
         )
 
         val encoderFactory = DefaultVideoEncoderFactory(rootEglBase.eglBaseContext, true, true)
@@ -311,7 +311,7 @@ class PeerConnectionClient private constructor(
             if (peerConnection == null) {
                 return
             }
-            logd("onSetSuccess $localSdp")
+
             if (initiator) {
                 if (peerConnection!!.remoteDescription == null) {
                     if (localSdp?.type == SessionDescription.Type.OFFER)
@@ -341,6 +341,7 @@ class PeerConnectionClient private constructor(
     }
 
     fun cleanUp() {
+        candidates.clear()
         peerConnection?.dispose()
         try {
             videoCapturer.stopCapture()
@@ -366,10 +367,10 @@ class PeerConnectionClient private constructor(
         private var instance: PeerConnectionClient? = null
 
         fun getInstance(
-            context: Context,
-            eglBase: EglBase,
-            localVideoSink: VideoSink,
-            remoteVideoSink: VideoSink
+                context: Context,
+                eglBase: EglBase,
+                localVideoSink: VideoSink,
+                remoteVideoSink: VideoSink
         ): PeerConnectionClient {
             if (instance == null)
                 instance = PeerConnectionClient(context, eglBase, localVideoSink, remoteVideoSink)

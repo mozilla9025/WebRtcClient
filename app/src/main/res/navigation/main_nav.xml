@@ -1,49 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/main_nav"
-            app:startDestination="@id/splashScreenFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/splashScreenFragment">
 
-    <fragment android:id="@+id/splashScreenFragment"
-              android:name="app.rtcmeetings.ui.start.SplashScreenFragment"
-              android:label="SplashScreenFragment"
-              tools:layout="@layout/fragment_splash_screen">
-        <action android:id="@+id/action_splashScreenFragment_to_startFragment"
-                app:destination="@id/startFragment"/>
-        <action android:id="@+id/action_splashScreenFragment_to_mainFragment"
-                app:destination="@id/mainFragment"/>
-    </fragment>
-
-    <fragment android:id="@+id/startFragment"
-              android:name="app.rtcmeetings.ui.start.StartFragment"
-              android:label="StartFragment"
-              tools:layout="@layout/fragment_start">
-        <action android:id="@+id/action_startFragment_to_signUpFragment"
-                app:destination="@id/signUpFragment"/>
-        <action android:id="@+id/action_startFragment_to_logInFragment"
-                app:destination="@id/logInFragment"/>
-    </fragment>
-
-    <fragment android:id="@+id/signUpFragment"
-              tools:layout="@layout/fragment_signup"
-              android:name="app.rtcmeetings.ui.auth.SignUpFragment"
-              android:label="SignUpFragment">
-        <action android:id="@+id/action_signUpFragment_to_logInFragment" app:destination="@id/logInFragment"/>
-    </fragment>
-
-    <fragment android:id="@+id/logInFragment"
-              tools:layout="@layout/fragment_login"
-              android:name="app.rtcmeetings.ui.auth.LogInFragment"
-              android:label="LogInFragment">
-        <action android:id="@+id/action_logInFragment_to_mainFragment" app:destination="@id/mainFragment"/>
-    </fragment>
-
-    <fragment android:id="@+id/mainFragment"
-              tools:layout="@layout/fragment_main"
-              android:name="app.rtcmeetings.ui.main.MainFragment"
-              android:label="MainFragment">
+    <fragment
+        android:id="@+id/splashScreenFragment"
+        android:name="app.rtcmeetings.ui.start.SplashScreenFragment"
+        android:label="SplashScreenFragment"
+        tools:layout="@layout/fragment_splash_screen">
         <action
-            android:id="@+id/action_mainFragment_to_splashScreenFragment"
-            app:destination="@id/splashScreenFragment" />
+            android:id="@+id/action_splashScreenFragment_to_startFragment"
+            app:launchSingleTop="true"
+            app:destination="@id/startFragment" />
+        <action
+            android:id="@+id/action_splashScreenFragment_to_mainFragment"
+            app:launchSingleTop="true"
+            app:destination="@id/mainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="app.rtcmeetings.ui.start.StartFragment"
+        android:label="StartFragment"
+        tools:layout="@layout/fragment_start">
+        <action
+            android:id="@+id/action_startFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="app.rtcmeetings.ui.auth.SignUpFragment"
+        android:label="SignUpFragment"
+        tools:layout="@layout/fragment_signup">
+        <action
+            android:id="@+id/action_signUpFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/logInFragment"
+        android:name="app.rtcmeetings.ui.auth.LogInFragment"
+        android:label="LogInFragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_logInFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="app.rtcmeetings.ui.main.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_startFragment"
+            app:launchSingleTop="true"
+            app:destination="@id/startFragment" />
     </fragment>
 </navigation>

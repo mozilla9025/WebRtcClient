@@ -12,6 +12,7 @@ import app.rtcmeetings.domain.usecase.CheckAuthUseCase
 import app.rtcmeetings.network.request.CallRequest
 import app.rtcmeetings.util.logd
 import app.rtcmeetings.util.loge
+import app.rtcmeetings.util.logi
 import app.rtcmeetings.webrtc.CallEvent
 import com.google.gson.Gson
 import dagger.android.AndroidInjection
@@ -189,8 +190,7 @@ class WsService : Service() {
     private fun emit(intent: Intent) {
         val extras = intent.getStringExtra(EXTRA_JSON)
         val callRequest = gson.fromJson<CallRequest>(extras, CallRequest::class.java)
-
-        socket?.emit(callRequest.event, extras)
+        socket?.emit(callRequest.event, gson.toJson(callRequest))
     }
 
     private fun checkConnection() {

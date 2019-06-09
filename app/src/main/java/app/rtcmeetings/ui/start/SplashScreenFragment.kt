@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseFragment
+import app.rtcmeetings.util.logi
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class SplashScreenFragment : BaseFragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+        logi("OnCreateView")
         return inflater.inflate(R.layout.fragment_splash_screen, container, false)
     }
 

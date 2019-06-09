@@ -1,9 +1,9 @@
 package app.rtcmeetings.base
 
-import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import app.rtcmeetings.util.logd
+import app.rtcmeetings.util.logi
 
 abstract class BaseFragment : Fragment() {
 
@@ -13,9 +13,15 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity?.onBackPressedDispatcher?.addCallback(backPressedCallback)
+    override fun onStart() {
+        super.onStart()
+        logi("onCreateView $activity ${activity?.onBackPressedDispatcher?.hasEnabledCallbacks()}")
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        backPressedCallback.remove()
     }
 
     open fun backPressedEnabled(): Boolean = true

@@ -17,6 +17,7 @@ import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseFragment
 import app.rtcmeetings.network.ws.WsService
 import app.rtcmeetings.util.i
+import app.rtcmeetings.util.logi
 import app.rtcmeetings.webrtc.CallEvent
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -38,10 +39,11 @@ class MainFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
+        logi("onCreateView")
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -49,7 +51,7 @@ class MainFragment : BaseFragment() {
         viewModel.logOutLiveData.observe(viewLifecycleOwner, Observer {
             when {
                 it -> Navigation.findNavController(view)
-                    .navigate(MainFragmentDirections.actionMainFragmentToSplashScreenFragment())
+                        .navigate(MainFragmentDirections.actionMainFragmentToStartFragment())
                 else -> Toast.makeText(context!!, "Unable to log out", Toast.LENGTH_SHORT).show()
             }
         })
@@ -66,20 +68,20 @@ class MainFragment : BaseFragment() {
             etId.text?.let {
                 if (it.isNotBlank() && !it.contains("^[a-zA-Z]*\$")) {
                     TedPermission.with(activity!!)
-                        .setPermissions(
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                            Manifest.permission.RECORD_AUDIO
-                        )
-                        .setPermissionListener(object : PermissionListener {
-                            override fun onPermissionGranted() {
-                                viewModel.getUser(it.toString().i)
-                            }
+                            .setPermissions(
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                                    Manifest.permission.RECORD_AUDIO
+                            )
+                            .setPermissionListener(object : PermissionListener {
+                                override fun onPermissionGranted() {
+                                    viewModel.getUser(it.toString().i)
+                                }
 
-                            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-                                Toast.makeText(context!!, "Required permissions denied", Toast.LENGTH_SHORT).show()
-                            }
-                        }).check()
+                                override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                                    Toast.makeText(context!!, "Required permissions denied", Toast.LENGTH_SHORT).show()
+                                }
+                            }).check()
                 } else Toast.makeText(context!!, "ID has wrong type", Toast.LENGTH_SHORT).show()
             }
         }
@@ -90,17 +92,23 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        bindService()
+    override fun onStart() {
+        super.onStart()
+        activity?.bindService(
+                Intent(context!!, WsService::class.java),
+                serviceConnection,
+                Context.BIND_AUTO_CREATE
+        )
     }
 
-    private fun bindService() {
-        activity?.bindService(
-            Intent(context!!, WsService::class.java),
-            serviceConnection,
-            Context.BIND_AUTO_CREATE
-        )
+    override fun onStop() {
+        super.onStop()
+        activity?.unbindService(serviceConnection)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        activity?.finish()
     }
 
     private val serviceConnection = object : ServiceConnection {
@@ -112,8 +120,4 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        activity?.finish()
-    }
 }

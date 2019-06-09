@@ -42,6 +42,21 @@ object CallEvent {
                 getIntent(context, CallService.ACTION_LOCAL_ACCEPT))
     }
 
+    fun localCamToggle(context: Context) {
+        ContextCompat.startForegroundService(context,
+                getIntent(context, CallService.ACTION_LOCAL_VIDEO_TOGGLE))
+    }
+
+    fun localMicToggle(context: Context) {
+        ContextCompat.startForegroundService(context,
+                getIntent(context, CallService.ACTION_LOCAL_TOGGLE_MICROPHONE))
+    }
+
+    fun localCamSwitch(context: Context) {
+        ContextCompat.startForegroundService(context,
+                getIntent(context, CallService.ACTION_LOCAL_SWITCH_CAMERA))
+    }
+
     fun onCall(context: Context, args: String, socketId: String) {
         ContextCompat.startForegroundService(context,
                 getIntent(context, CallService.ACTION_INCOMING_CALL)

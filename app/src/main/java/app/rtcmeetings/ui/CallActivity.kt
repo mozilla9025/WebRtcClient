@@ -15,10 +15,8 @@ import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseActivity
 import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.util.logw
-import app.rtcmeetings.webrtc.CallEvent
-import app.rtcmeetings.webrtc.CallEventListener
-import app.rtcmeetings.webrtc.CallService
-import app.rtcmeetings.webrtc.CallState
+import app.rtcmeetings.webrtc.*
+import app.rtcmeetings.webrtc.video.CamSide
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import kotlinx.android.synthetic.main.include_active_call.*
@@ -27,7 +25,7 @@ import kotlinx.android.synthetic.main.include_outgoing_call.*
 import org.webrtc.RendererCommon
 
 
-class CallActivity : BaseActivity(), CallEventListener {
+class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     private var callService: CallService? = null
 
@@ -49,14 +47,16 @@ class CallActivity : BaseActivity(), CallEventListener {
                 localVideo.run {
                     init(eglBase.eglBaseContext, null)
                     setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_BALANCED)
-                    setMirror(false)
+                    setMirror(true)
                     setEnableHardwareScaler(true)
                 }
                 setCallEventListener(this@CallActivity)
+                setDeviceEventListener(this@CallActivity)
+
                 setTargets(localVideo, remoteVideo)
                 when (callState) {
-                    CallState.OUTGOING_PENDING -> setUpOutgoingCallView(interlocutor!!)
-                    CallState.INCOMING_PENDING -> setUpIncomingCallView(interlocutor!!)
+                    CallState.OUTGOING_PENDING, CallState.OUTGOING_CONNECTING -> setUpOutgoingCallView(interlocutor!!)
+                    CallState.INCOMING_PENDING, CallState.INCOMING_CONNECTING -> setUpIncomingCallView(interlocutor!!)
                     CallState.CONNECTED -> setUpActiveCallView()
                     else -> {
                         logw("Call state is different than handled")
@@ -137,13 +137,16 @@ class CallActivity : BaseActivity(), CallEventListener {
     }
 
     override fun onRemoteUserStopStream() {
-
+        runOnUiThread {
+            remoteVideo.visibility = View.GONE
+        }
     }
 
     override fun onRemoteUserStartStream() {
-
+        runOnUiThread {
+            remoteVideo.visibility = View.VISIBLE
+        }
     }
-
 
     override fun onFinish() {
         runOnUiThread {
@@ -151,6 +154,22 @@ class CallActivity : BaseActivity(), CallEventListener {
             finish()
         }
     }
+
+    override fun onCamToggle(isEnabled: Boolean) {
+        runOnUiThread {
+            localVideo.visibility = if (isEnabled) View.VISIBLE else View.GONE
+        }
+    }
+
+    override fun onMicToggle(isEnabled: Boolean) {
+    }
+
+    override fun onCamSwitch(camSide: CamSide) {
+        runOnUiThread {
+            localVideo.setMirror(camSide == CamSide.FRONT_FACING)
+        }
+    }
+
 
     private fun setClickListeners() {
         btnCancelCall.setOnClickListener {
@@ -199,6 +218,10 @@ class CallActivity : BaseActivity(), CallEventListener {
                         }
                     }).check()
         }
+
+        btnCam.setOnClickListener { CallEvent.localCamToggle(this@CallActivity) }
+        btnMic.setOnClickListener { CallEvent.localMicToggle(this@CallActivity) }
+        btnSwitchCam.setOnClickListener { CallEvent.localCamSwitch(this@CallActivity) }
     }
 
     private fun setUpActiveCallView() {
