@@ -88,14 +88,14 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         super.onResume()
         window.run {
             decorView.systemUiVisibility =
-                    (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_FULLSCREEN
-                            or View.SYSTEM_UI_FLAG_LOW_PROFILE
-                            or View.SYSTEM_UI_FLAG_IMMERSIVE
-                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
             addFlags(WindowManager.LayoutParams.FLAG_IGNORE_CHEEK_PRESSES)
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -107,6 +107,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onStop() {
         super.onStop()
+        releaseVideoViews()
         unbindCallService()
     }
 
@@ -124,14 +125,14 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onDisconnect() {
         runOnUiThread {
-            releaseViewViews()
+            releaseVideoViews()
             finish()
         }
     }
 
     override fun onFail() {
         runOnUiThread {
-            releaseViewViews()
+            releaseVideoViews()
             finish()
         }
     }
@@ -150,7 +151,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onFinish() {
         runOnUiThread {
-            releaseViewViews()
+            releaseVideoViews()
             finish()
         }
     }
@@ -177,7 +178,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
             denied = true
             CallEvent.localCancel(this@CallActivity)
-            releaseViewViews()
+            releaseVideoViews()
             finish()
         }
         btnEnd.setOnClickListener {
@@ -185,7 +186,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
             denied = true
             CallEvent.localEnd(this@CallActivity)
-            releaseViewViews()
+            releaseVideoViews()
             finish()
         }
         btnDeclineCall.setOnClickListener {
@@ -193,7 +194,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
             denied = true
             CallEvent.localDecline(this@CallActivity)
-            releaseViewViews()
+            releaseVideoViews()
             finish()
         }
         btnAcceptCall.setOnClickListener {
@@ -202,21 +203,21 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
             accepted = true
             CallEvent.stopIncomingRinger(this@CallActivity)
             TedPermission.with(this@CallActivity)
-                    .setPermissions(
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.RECORD_AUDIO,
-                            Manifest.permission.MODIFY_AUDIO_SETTINGS
-                    ).setPermissionListener(object : PermissionListener {
-                        override fun onPermissionGranted() {
-                            CallEvent.acceptIncomingCall(this@CallActivity)
-                        }
+                .setPermissions(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS
+                ).setPermissionListener(object : PermissionListener {
+                    override fun onPermissionGranted() {
+                        CallEvent.acceptIncomingCall(this@CallActivity)
+                    }
 
-                        override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-                            CallEvent.localDecline(this@CallActivity)
-                            releaseViewViews()
-                            finish()
-                        }
-                    }).check()
+                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                        CallEvent.localDecline(this@CallActivity)
+                        releaseVideoViews()
+                        finish()
+                    }
+                }).check()
         }
 
         btnCam.setOnClickListener { CallEvent.localCamToggle(this@CallActivity) }
@@ -244,16 +245,16 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         tvNameOutgoing.text = user.name
     }
 
-    private fun releaseViewViews() {
+    private fun releaseVideoViews() {
         localVideo?.release()
         remoteVideo?.release()
     }
 
     private fun bindCallService() {
         bindService(
-                Intent(this@CallActivity, CallService::class.java),
-                connection,
-                Context.BIND_AUTO_CREATE
+            Intent(this@CallActivity, CallService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
         )
     }
 

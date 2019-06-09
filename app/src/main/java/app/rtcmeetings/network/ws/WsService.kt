@@ -130,17 +130,17 @@ class WsService : Service() {
 
     private fun connect() {
         disposables.add(
-                checkAuthUseCase.execute()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({
-                            when (it) {
-                                true -> createConnection()
-                                else -> closeConnection()
-                            }
-                        }, {
-                            loge(it)
-                            closeConnection()
-                        })
+            checkAuthUseCase.execute()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    when (it) {
+                        true -> createConnection()
+                        else -> closeConnection()
+                    }
+                }, {
+                    loge(it)
+                    closeConnection()
+                })
         )
         checkConnection()
     }
@@ -152,8 +152,8 @@ class WsService : Service() {
 
     private fun createConnection() {
         wsClient = WsClient(
-                BuildConfig.WS_URL,
-                SocketQuery("token", authStorage.getRawToken())
+            BuildConfig.WS_URL,
+            SocketQuery("token", authStorage.getRawToken())
         )
 
         wsClient!!.connect()
@@ -190,6 +190,7 @@ class WsService : Service() {
     private fun emit(intent: Intent) {
         val extras = intent.getStringExtra(EXTRA_JSON)
         val callRequest = gson.fromJson<CallRequest>(extras, CallRequest::class.java)
+        logi("${gson.toJson(callRequest)}")
         socket?.emit(callRequest.event, gson.toJson(callRequest))
     }
 
