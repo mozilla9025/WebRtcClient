@@ -5,90 +5,231 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="To start call input the target user ID and press Call"
-        android:textSize="@dimen/sp16"
+    <ScrollView
+        android:layout_width="@dimen/dp0"
+        android:layout_height="@dimen/dp0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clEmail"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle">
-
-        <TextView
-            android:id="@+id/tvEmailHeader"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dp24"
-            android:text="Target user ID"
-            android:textColor="@color/darkGray"
-            android:textSize="@dimen/sp16"
-            app:layout_constraintStart_toStartOf="@id/etId"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/etId"
-            android:layout_width="@dimen/dp0"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp8"
-            android:background="@drawable/selector_outlined_input"
-            android:digits="0123456789"
-            android:inputType="number"
-            android:longClickable="false"
-            android:numeric="integer"
-            android:overScrollMode="never"
-            android:paddingStart="@dimen/dp24"
-            android:paddingTop="@dimen/dp8"
-            android:paddingEnd="@dimen/dp24"
-            android:paddingBottom="@dimen/dp8"
-            android:textSize="@dimen/sp16"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvEmailHeader"
-            app:layout_constraintWidth_percent="0.7" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp16"
+                android:layout_marginTop="@dimen/dp16">
 
-    <Button
-        android:id="@+id/btnStartCall"
-        android:layout_width="@dimen/dp0"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp24"
-        android:background="@drawable/selector_gradient_btn"
-        android:drawableEnd="@drawable/ic_accept_call"
-        android:gravity="center"
-        android:paddingStart="@dimen/dp40"
-        android:paddingEnd="@dimen/dp16"
-        android:text="Call"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clEmail"
-        app:layout_constraintWidth_percent="0.55" />
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvItem"
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dp16"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="56dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/btnLogOut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dp24"
-        android:background="?android:selectableItemBackground"
-        android:text="Log out"
-        android:textAllCaps="false"
-        android:textColor="@color/mediumGrey"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="76dp"
+                        android:layout_marginTop="@dimen/dp16"
+                        android:layout_marginEnd="@dimen/dp16"
+                        android:layout_marginBottom="@dimen/dp16">
 
+                        <TextView
+                            android:id="@+id/tvMainItemMessage"
+                            android:layout_width="@dimen/dp0"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/dp12"
+                            android:text="In case you have something important to discuss in person with nobody else."
+                            android:textSize="@dimen/sp16"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:id="@+id/btnToCall"
+                            android:layout_width="@dimen/dp0"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp12"
+                            android:layout_marginEnd="60dp"
+                            android:background="@drawable/selector_gradient_main_action_btn"
+                            android:stateListAnimator="@null"
+                            android:text="One-to-One Call"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp16"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:src="@drawable/img_1"
+                    android:translationZ="@dimen/dp2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp16"
+                android:layout_marginTop="@dimen/dp16">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvItem1"
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dp16"
+                    app:cardBackgroundColor="@color/lightGray"
+                    app:cardCornerRadius="56dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="76dp"
+                        android:layout_marginTop="@dimen/dp16"
+                        android:layout_marginEnd="@dimen/dp16"
+                        android:layout_marginBottom="@dimen/dp16">
+
+                        <TextView
+                            android:id="@+id/tvMainItemMessage1"
+                            android:layout_width="@dimen/dp0"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/dp12"
+                            android:text="Leverage your workflow through  instant meetings. Up to 30 people in a room!"
+                            android:textSize="@dimen/sp16"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:layout_width="@dimen/dp0"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp12"
+                            android:layout_marginEnd="60dp"
+                            android:background="@drawable/selector_white_btn"
+                            android:backgroundTint="@color/mediumGrey"
+                            android:stateListAnimator="@null"
+                            android:text="Create conference"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp16"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage1" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:src="@drawable/img_2"
+                    android:translationZ="@dimen/dp2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp16"
+                android:layout_marginTop="@dimen/dp16">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvItem2"
+                    android:layout_width="@dimen/dp0"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dp16"
+                    app:cardBackgroundColor="@color/lightGray"
+                    app:cardCornerRadius="56dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="76dp"
+                        android:layout_marginTop="@dimen/dp16"
+                        android:layout_marginEnd="@dimen/dp16"
+                        android:layout_marginBottom="@dimen/dp16">
+
+                        <TextView
+                            android:id="@+id/tvMainItemMessage2"
+                            android:layout_width="@dimen/dp0"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/dp12"
+                            android:text="Keep up with all key decisions by joining conversation in 1 click. Just put an ID!"
+                            android:textSize="@dimen/sp16"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:layout_width="@dimen/dp0"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp12"
+                            android:layout_marginEnd="60dp"
+                            android:background="@drawable/selector_white_btn"
+                            android:backgroundTint="@color/mediumGrey"
+                            android:stateListAnimator="@null"
+                            android:text="Join conference"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sp16"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage2" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:src="@drawable/img_3"
+                    android:translationZ="@dimen/dp2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/btnLogOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dp24"
+                android:layout_marginBottom="@dimen/dp24"
+                android:background="?android:selectableItemBackground"
+                android:text="Log out"
+                android:textAllCaps="false"
+                android:textColor="@color/mediumGrey"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
