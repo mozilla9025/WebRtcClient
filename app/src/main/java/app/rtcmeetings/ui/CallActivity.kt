@@ -48,6 +48,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
                     init(eglBase.eglBaseContext, null)
                     setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_BALANCED)
                     setMirror(true)
+                    setZOrderMediaOverlay(true)
                     setEnableHardwareScaler(true)
                 }
                 setCallEventListener(this@CallActivity)

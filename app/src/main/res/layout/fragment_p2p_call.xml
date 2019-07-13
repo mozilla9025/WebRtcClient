@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvCurrentId"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/sp18"
+        app:layout_constraintBottom_toTopOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="To start call input the target user ID and press Call"
+        android:textSize="@dimen/sp16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clEmail"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <TextView
+            android:id="@+id/tvEmailHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp24"
+            android:text="Target user ID"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintStart_toStartOf="@id/etId"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etId"
+            android:layout_width="@dimen/dp0"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp8"
+            android:background="@drawable/selector_outlined_input"
+            android:digits="0123456789"
+            android:inputType="number"
+            android:longClickable="false"
+            android:overScrollMode="never"
+            android:paddingStart="@dimen/dp24"
+            android:paddingTop="@dimen/dp8"
+            android:paddingEnd="@dimen/dp24"
+            android:paddingBottom="@dimen/dp8"
+            android:textSize="@dimen/sp16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvEmailHeader"
+            app:layout_constraintWidth_percent="0.7" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnStartCall"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp24"
+        android:background="@drawable/selector_gradient_btn"
+        android:drawableEnd="@drawable/ic_accept_call"
+        android:gravity="center"
+        android:paddingStart="@dimen/dp40"
+        android:paddingEnd="@dimen/dp16"
+        android:text="Call"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clEmail"
+        app:layout_constraintWidth_percent="0.55" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
