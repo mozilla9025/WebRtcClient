@@ -8,4 +8,31 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    <style name="AppTheme.BaseAuthorizationButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@drawable/shape_btn_auth_gradient</item>
+        <item name="android:fontFamily">@font/helvetica_neue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/sp16</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">@dimen/dp0</item>
+        <item name="android:paddingTop">@dimen/dp10</item>
+        <item name="android:paddingBottom">@dimen/dp10</item>
+    </style>
+
+    <style name="AppTheme.GradientedLoginButton" parent="AppTheme.BaseAuthorizationButton">
+        <item name="android:background">@drawable/shape_btn_auth_gradient</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.SignUpButton"  parent="AppTheme.BaseAuthorizationButton">
+        <item name="android:background">@drawable/shape_btn_sign_up</item>
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
+    <style name="AppTheme.RegistrationTitleAppearance" >
+        <item name="android:fontFamily">@font/helvetica_neue_bold</item>
+        <item name="android:textColor">@color/textColorDark</item>
+        <item name="android:textSize">@dimen/sp24</item>
+    </style>
 </resources>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/ib_action_left"
+        android:layout_width="@dimen/dp32"
+        android:layout_height="@dimen/dp32"
+        android:layout_marginStart="@dimen/dp20"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="@dimen/dp4"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_arrowback"
+        android:tint="@color/textColor"
+        app:layout_collapseMode="pin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp16"
+        android:layout_marginTop="@dimen/dp14"
+        android:layout_marginEnd="@dimen/dp16"
+        android:layout_marginBottom="@dimen/dp14"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="@string/start_fragment_label_language"
+        android:textColor="@color/textColorDark"
+        android:textSize="@dimen/sp24"
+        app:fontFamily="@font/helvetica_neue_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ib_action"
+        app:layout_constraintStart_toEndOf="@id/ib_action_left"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="@dimen/dp52"
+        app:layout_goneMarginStart="@dimen/dp52" />
+
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/ib_action"
+        android:layout_width="@dimen/dp36"
+        android:layout_height="@dimen/dp36"
+        android:layout_marginEnd="@dimen/dp20"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="@dimen/dp4"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_accept_call"
+        android:tint="@color/textColor"
+        app:layout_collapseMode="pin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,7 @@
 package app.rtcmeetings.di
 
-import app.rtcmeetings.ui.CallActivity
-import app.rtcmeetings.ui.MainActivity
+import app.rtcmeetings.ui.module.CallActivity
+import app.rtcmeetings.ui.module.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

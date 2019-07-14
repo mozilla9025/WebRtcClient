@@ -2,11 +2,11 @@ package app.rtcmeetings.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import app.rtcmeetings.ui.auth.LogInViewModel
-import app.rtcmeetings.ui.auth.SignUpViewModel
-import app.rtcmeetings.ui.main.MainViewModel
-import app.rtcmeetings.ui.p2pcall.P2pCallViewModel
-import app.rtcmeetings.ui.start.SplashScreenViewModel
+import app.rtcmeetings.ui.module.auth.LogInViewModel
+import app.rtcmeetings.ui.module.auth.SignUpViewModel
+import app.rtcmeetings.ui.module.main.MainViewModel
+import app.rtcmeetings.ui.module.p2pcall.P2pCallViewModel
+import app.rtcmeetings.ui.module.start.SplashScreenViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
