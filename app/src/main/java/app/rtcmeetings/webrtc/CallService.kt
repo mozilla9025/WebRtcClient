@@ -181,6 +181,7 @@ class CallService : Service(), WebRtcClientListener {
         startTime = System.currentTimeMillis()
         callState = CallState.CONNECTED
         cameraSide = webRtcClient?.getCameraSide()
+        isSpeakerEnabled = webRtcClient?.localVideoEnabled ?: false
         audioManager.startCommunication(true)
         callEventListener?.onConnect()
     }

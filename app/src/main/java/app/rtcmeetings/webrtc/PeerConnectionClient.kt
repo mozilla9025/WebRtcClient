@@ -21,8 +21,9 @@ class PeerConnectionClient private constructor(
 ) {
 
     var webRtcClientListener: WebRtcClientListener? = null
+    var localVideoEnabled: Boolean = true
+
     private var localAudioEnabled: Boolean = true
-    private var localVideoEnabled: Boolean = true
     private var remoteVideoEnabled: Boolean = true
 
     private var audioConstraints: MediaConstraints? = null
