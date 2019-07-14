@@ -65,6 +65,7 @@ class CallService : Service(), WebRtcClientListener {
 
     private var connected = false
     private var answerSdpSat = false
+    var isSpeakerEnabled = false
 
     private lateinit var audioManager: CallAudioManager
 
@@ -118,6 +119,8 @@ class CallService : Service(), WebRtcClientListener {
                 ACTION_LOCAL_SWITCH_CAMERA -> handleLocalSwitchCamera()
                 ACTION_LOCAL_TOGGLE_MICROPHONE -> handleLocalToggleMicrophone()
 
+                ACTION_LOCAL_TOGGLE_SPEAKER -> handleLocalToggleSpeaker(intent)
+
                 ACTION_REMOTE_ACCEPTED -> handleRemoteAccept(intent)
                 ACTION_REMOTE_DECLINE -> handleRemoteDecline(intent)
                 ACTION_REMOTE_CANCEL -> handleRemoteCancel(intent)
@@ -142,34 +145,34 @@ class CallService : Service(), WebRtcClientListener {
     override fun onAnswerGenerated(sdp: SessionDescription) {
         answerSdpSat = true
         disposables.add(
-                callUseCase.acceptCall(callId!!, sdp.description, socketId!!)
-                        .subscribe({
-                            callState = CallState.INCOMING_CONNECTING
-                            callEventListener?.onCreatingConnection()
-                            sendLocalIceCandidates()
-                        }, {
-                            callState = CallState.FAILED
-                            callEventListener?.onFail()
-                            clearAndFinish()
-                        })
+            callUseCase.acceptCall(callId!!, sdp.description, socketId!!)
+                .subscribe({
+                    callState = CallState.INCOMING_CONNECTING
+                    callEventListener?.onCreatingConnection()
+                    sendLocalIceCandidates()
+                }, {
+                    callState = CallState.FAILED
+                    callEventListener?.onFail()
+                    clearAndFinish()
+                })
         )
     }
 
     override fun onOfferGenerated(sdp: SessionDescription) {
         disposables.add(
-                callUseCase.startCall(
-                        socketId!!,
-                        sdp.description,
-                        interlocutor?.id!!
-                ).subscribe({ id ->
-                    callId = id
-                    callState = CallState.OUTGOING_CONNECTING
-                    callEventListener?.onCreatingConnection()
-                }, {
-                    callState = CallState.FAILED
-                    callEventListener?.onFail()
-                    CallEvent.terminate(this@CallService)
-                })
+            callUseCase.startCall(
+                socketId!!,
+                sdp.description,
+                interlocutor?.id!!
+            ).subscribe({ id ->
+                callId = id
+                callState = CallState.OUTGOING_CONNECTING
+                callEventListener?.onCreatingConnection()
+            }, {
+                callState = CallState.FAILED
+                callEventListener?.onFail()
+                CallEvent.terminate(this@CallService)
+            })
         )
     }
 
@@ -232,25 +235,30 @@ class CallService : Service(), WebRtcClientListener {
     private fun handleDeclineIncomingCall() {
         audioManager.stopIncomingRinger()
         callId?.let {
-            disposables.add(callUseCase.declineCall(it)
+            disposables.add(
+                callUseCase.declineCall(it)
                     .subscribe({ clearAndFinish() },
-                            { clearAndFinish() }))
+                        { clearAndFinish() })
+            )
         } ?: clearAndFinish()
     }
 
     private fun handleCancelOutgoingCall() {
         callId?.let {
-            disposables.add(callUseCase.cancelCall(it)
+            disposables.add(
+                callUseCase.cancelCall(it)
                     .subscribe({ clearAndFinish() },
-                            { clearAndFinish() }))
+                        { clearAndFinish() })
+            )
         } ?: clearAndFinish()
     }
 
     private fun handleFinishCall() {
         callId?.let {
-            disposables.add(callUseCase.finishCall(it)
+            disposables.add(
+                callUseCase.finishCall(it)
                     .subscribe({ clearAndFinish() },
-                            { clearAndFinish() })
+                        { clearAndFinish() })
             )
         } ?: clearAndFinish()
     }
@@ -352,11 +360,13 @@ class CallService : Service(), WebRtcClientListener {
         val callRequest = CallRequest().apply {
             userId = interlocutor!!.id
             event = WsEvent.ICE_EXCHANGE
-            payload = gson.toJson(IceExchange(
+            payload = gson.toJson(
+                IceExchange(
                     iceCandidate.sdpMid,
                     iceCandidate.sdpMLineIndex,
                     iceCandidate.sdp
-            ))
+                )
+            )
         }
         WsService.emit(this@CallService, gson.toJson(callRequest))
     }
@@ -368,10 +378,10 @@ class CallService : Service(), WebRtcClientListener {
 
     private fun initWebRtc() {
         webRtcClient = PeerConnectionClient.getInstance(
-                applicationContext,
-                eglBase,
-                localVideoSinkProxy,
-                remoteVideoSinkProxy
+            applicationContext,
+            eglBase,
+            localVideoSinkProxy,
+            remoteVideoSinkProxy
         )
         webRtcClient!!.webRtcClientListener = this
     }
@@ -384,13 +394,14 @@ class CallService : Service(), WebRtcClientListener {
     }
 
     private fun handleLocalToggleCamera() {
-        webRtcClient?.toggleCam()?.let {
-            deviceEventListener?.onCamToggle(it)
+        webRtcClient?.toggleCam()?.let { camEnabled ->
+            deviceEventListener?.onCamToggle(camEnabled)
             val callRequest = CallRequest().apply {
                 userId = interlocutor!!.id
                 event = WsEvent.VIDEO_TOGGLE
-                payload = gson.toJson(it)
+                payload = gson.toJson(camEnabled)
             }
+            CallEvent.localSpeakerToggle(this@CallService, camEnabled)
             WsService.emit(this@CallService, gson.toJson(callRequest))
         }
     }
@@ -398,6 +409,16 @@ class CallService : Service(), WebRtcClientListener {
     private fun handleLocalToggleMicrophone() {
         webRtcClient?.toggleMic()?.let {
             deviceEventListener?.onMicToggle(it)
+        }
+    }
+
+    private fun handleLocalToggleSpeaker(intent: Intent) {
+        val intentSpeakerValue = intent.getBooleanExtra(EXTRA_BOOLEAN, false)
+
+        if (isSpeakerEnabled != intentSpeakerValue) {
+            isSpeakerEnabled = intentSpeakerValue
+            audioManager.setSpeakerEnabled(isSpeakerEnabled)
+            deviceEventListener?.onSpeakerToggle(isSpeakerEnabled)
         }
     }
 
@@ -412,36 +433,36 @@ class CallService : Service(), WebRtcClientListener {
     private fun getNotification(): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("call", "WebRtcCall", NotificationManager.IMPORTANCE_DEFAULT)
-                    .apply {
-                        importance = NotificationManager.IMPORTANCE_DEFAULT
-                        enableVibration(false)
-                    }
+                .apply {
+                    importance = NotificationManager.IMPORTANCE_DEFAULT
+                    enableVibration(false)
+                }
 
             val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             nm.createNotificationChannel(channel)
 
             val contentIntent = PendingIntent.getActivity(
-                    this, 0,
-                    Intent(this, CallActivity::class.java), 0
+                this, 0,
+                Intent(this, CallActivity::class.java), 0
             )
             return Notification.Builder(this)
-                    .setSmallIcon(R.drawable.ic_accept_call)
-                    .setWhen(System.currentTimeMillis())
-                    .setChannelId(channel.id)
-                    .setContentTitle(getText(R.string.app_name))
-                    .setContentIntent(contentIntent)
-                    .build()
+                .setSmallIcon(R.drawable.ic_accept_call)
+                .setWhen(System.currentTimeMillis())
+                .setChannelId(channel.id)
+                .setContentTitle(getText(R.string.app_name))
+                .setContentIntent(contentIntent)
+                .build()
         } else {
             val contentIntent = PendingIntent.getActivity(
-                    this, 0,
-                    Intent(this, CallActivity::class.java), 0
+                this, 0,
+                Intent(this, CallActivity::class.java), 0
             )
             return Notification.Builder(this)
-                    .setSmallIcon(R.drawable.ic_accept_call)
-                    .setWhen(System.currentTimeMillis())
-                    .setContentTitle(getText(R.string.app_name))
-                    .setContentIntent(contentIntent)
-                    .build()
+                .setSmallIcon(R.drawable.ic_accept_call)
+                .setWhen(System.currentTimeMillis())
+                .setContentTitle(getText(R.string.app_name))
+                .setContentIntent(contentIntent)
+                .build()
         }
     }
 
@@ -466,6 +487,7 @@ class CallService : Service(), WebRtcClientListener {
         const val ACTION_STOP_INCOMING_RINGER = "action_stop_incoming_ringer"
         const val ACTION_LOCAL_SWITCH_CAMERA = "action_local_switch_camera"
         const val ACTION_LOCAL_TOGGLE_MICROPHONE = "action_local_toggle_microphone"
+        const val ACTION_LOCAL_TOGGLE_SPEAKER = "action_local_toggle_speaker"
 
         const val ACTION_REMOTE_ACCEPTED = "action_remote_call_accept"
         const val ACTION_REMOTE_DECLINE = "action_remote_call_decline"
@@ -477,6 +499,7 @@ class CallService : Service(), WebRtcClientListener {
         const val ACTION_TERMINATE = "action_terminate"
 
         const val EXTRA_STRING = "call_extra_string_value"
+        const val EXTRA_BOOLEAN = "call_extra_boolean_value"
         const val EXTRA_SOCKET_ID = "call_extra_socket_id"
         const val EXTRA_USER = "call_extra_user"
     }

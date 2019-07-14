@@ -160,10 +160,20 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
     override fun onCamToggle(isEnabled: Boolean) {
         runOnUiThread {
             localVideo.visibility = if (isEnabled) View.VISIBLE else View.GONE
+            btnCam.setImageResource(if (isEnabled) R.drawable.ic_cam else R.drawable.ic_cam_off)
         }
     }
 
     override fun onMicToggle(isEnabled: Boolean) {
+        runOnUiThread {
+            btnMic.setImageResource(if (isEnabled) R.drawable.ic_mic else R.drawable.ic_mic_off)
+        }
+    }
+
+    override fun onSpeakerToggle(isEnabled: Boolean) {
+        runOnUiThread {
+            btnSpeaker.setImageResource(if (isEnabled) R.drawable.ic_speaker_on else R.drawable.ic_speaker_off)
+        }
     }
 
     override fun onCamSwitch(camSide: CamSide) {
@@ -171,7 +181,6 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
             localVideo.setMirror(camSide == CamSide.FRONT_FACING)
         }
     }
-
 
     private fun setClickListeners() {
         btnCancelCall.setOnClickListener {
@@ -224,6 +233,12 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         btnCam.setOnClickListener { CallEvent.localCamToggle(this@CallActivity) }
         btnMic.setOnClickListener { CallEvent.localMicToggle(this@CallActivity) }
         btnSwitchCam.setOnClickListener { CallEvent.localCamSwitch(this@CallActivity) }
+        btnSpeaker.setOnClickListener {
+            CallEvent.localSpeakerToggle(
+                this@CallActivity,
+                !callService?.isSpeakerEnabled!!
+            )
+        }
     }
 
     private fun setUpActiveCallView() {

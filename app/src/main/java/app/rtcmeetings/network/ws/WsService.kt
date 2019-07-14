@@ -6,13 +6,13 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
+import android.widget.Toast
 import app.rtcmeetings.BuildConfig
 import app.rtcmeetings.data.AuthStorage
 import app.rtcmeetings.domain.usecase.CheckAuthUseCase
 import app.rtcmeetings.network.request.CallRequest
 import app.rtcmeetings.util.logd
 import app.rtcmeetings.util.loge
-import app.rtcmeetings.util.logi
 import app.rtcmeetings.webrtc.CallEvent
 import com.google.gson.Gson
 import dagger.android.AndroidInjection
@@ -105,6 +105,14 @@ class WsService : Service() {
         }.onFailure { loge(it) }
     }
 
+    private val onConnect = Emitter.Listener {
+        runCatching {
+            AndroidSchedulers.mainThread().scheduleDirect {
+                Toast.makeText(this@WsService, "Ws connected", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     fun getSocketId(): String? {
         return socket?.id()
     }
@@ -129,20 +137,22 @@ class WsService : Service() {
     }
 
     private fun connect() {
-        disposables.add(
-            checkAuthUseCase.execute()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    when (it) {
-                        true -> createConnection()
-                        else -> closeConnection()
-                    }
-                }, {
-                    loge(it)
-                    closeConnection()
-                })
-        )
-        checkConnection()
+        if (socket == null || !socket?.connected()!!) {
+            disposables.add(
+                    checkAuthUseCase.execute()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                when (it) {
+                                    true -> createConnection()
+                                    else -> closeConnection()
+                                }
+                            }, {
+                                loge(it)
+                                closeConnection()
+                            })
+            )
+            checkConnection()
+        }
     }
 
     private fun disconnect() {
@@ -152,8 +162,8 @@ class WsService : Service() {
 
     private fun createConnection() {
         wsClient = WsClient(
-            BuildConfig.WS_URL,
-            SocketQuery("token", authStorage.getRawToken())
+                BuildConfig.WS_URL,
+                SocketQuery("token", authStorage.getRawToken())
         )
 
         wsClient!!.connect()
@@ -161,6 +171,7 @@ class WsService : Service() {
             socket = it
         }
         socket!!.run {
+            on(Socket.EVENT_CONNECT, onConnect)
             on(WsEvent.NEW_CALL, onCall)
             on(WsEvent.ACCEPT, onAccept)
             on(WsEvent.DECLINE, onDecline)
@@ -174,6 +185,7 @@ class WsService : Service() {
 
     private fun closeConnection() {
         socket?.run {
+            off(Socket.EVENT_CONNECT, onConnect)
             off(WsEvent.NEW_CALL, onCall)
             off(WsEvent.ACCEPT, onAccept)
             off(WsEvent.DECLINE, onDecline)
@@ -190,7 +202,6 @@ class WsService : Service() {
     private fun emit(intent: Intent) {
         val extras = intent.getStringExtra(EXTRA_JSON)
         val callRequest = gson.fromJson<CallRequest>(extras, CallRequest::class.java)
-        logi("${gson.toJson(callRequest)}")
         socket?.emit(callRequest.event, gson.toJson(callRequest))
     }
 

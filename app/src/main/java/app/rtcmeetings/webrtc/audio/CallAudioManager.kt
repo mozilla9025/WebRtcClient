@@ -18,7 +18,10 @@ class CallAudioManager(private val context: Context) {
     }
 
     fun initializeAudioForCall() {
-        audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+        audioManager.requestAudioFocus(
+            null, AudioManager.STREAM_VOICE_CALL,
+            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE
+        )
     }
 
     fun startIncomingRinger(vibrate: Boolean) {
@@ -27,7 +30,12 @@ class CallAudioManager(private val context: Context) {
         audioManager.isMicrophoneMute = false
         audioManager.isSpeakerphoneOn = speaker
 
-        incomingRinger.start(RingtoneManager.getActualDefaultRingtoneUri(context.applicationContext, RingtoneManager.TYPE_RINGTONE), vibrate)
+        incomingRinger.start(
+            RingtoneManager.getActualDefaultRingtoneUri(
+                context.applicationContext,
+                RingtoneManager.TYPE_RINGTONE
+            ), vibrate
+        )
     }
 
     fun startOutgoingRinger(type: OutgoingRinger.Type) {
@@ -51,6 +59,10 @@ class CallAudioManager(private val context: Context) {
         if (!preserveSpeakerphone) {
             audioManager.isSpeakerphoneOn = false
         }
+    }
+
+    fun setSpeakerEnabled(enabled: Boolean) {
+        audioManager.isSpeakerphoneOn = enabled
     }
 
     fun stop(playDisconnected: Boolean) {

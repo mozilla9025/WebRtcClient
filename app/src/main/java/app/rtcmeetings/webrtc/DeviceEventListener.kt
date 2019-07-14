@@ -8,6 +8,8 @@ interface DeviceEventListener {
 
     fun onMicToggle(isEnabled: Boolean)
 
+    fun onSpeakerToggle(isEnabled: Boolean)
+
     fun onCamSwitch(camSide: CamSide)
 
 }

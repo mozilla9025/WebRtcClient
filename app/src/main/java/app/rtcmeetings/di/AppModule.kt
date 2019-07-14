@@ -10,7 +10,9 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module(
-    includes = [NetworkModule::class,
+    includes = [
+        DatabaseModule::class,
+        NetworkModule::class,
         ApiModule::class,
         UseCaseModule::class,
         RepositoryModule::class]

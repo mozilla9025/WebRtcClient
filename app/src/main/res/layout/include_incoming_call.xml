@@ -34,8 +34,8 @@
 
         <ImageButton
             android:id="@+id/btnAcceptCall"
-            android:layout_width="@dimen/dp46"
-            android:layout_height="@dimen/dp46"
+            android:layout_width="@dimen/dp64"
+            android:layout_height="@dimen/dp64"
             android:background="@drawable/selector_green_btn"
             android:src="@drawable/ic_accept_call"
             android:tint="@color/white"
@@ -46,8 +46,8 @@
 
         <ImageButton
             android:id="@+id/btnDeclineCall"
-            android:layout_width="@dimen/dp46"
-            android:layout_height="@dimen/dp46"
+            android:layout_width="@dimen/dp64"
+            android:layout_height="@dimen/dp64"
             android:background="@drawable/selector_red_btn"
             android:src="@drawable/ic_call_end"
             android:tint="@color/white"

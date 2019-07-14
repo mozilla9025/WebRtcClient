@@ -25,8 +25,8 @@
 
     <ImageButton
         android:id="@+id/btnCancelCall"
-        android:layout_width="@dimen/dp46"
-        android:layout_height="@dimen/dp46"
+        android:layout_width="@dimen/dp64"
+        android:layout_height="@dimen/dp64"
         android:background="@drawable/selector_red_btn"
         android:src="@drawable/ic_call_end"
         android:tint="@color/white"

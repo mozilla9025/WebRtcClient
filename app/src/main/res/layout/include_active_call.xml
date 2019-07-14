@@ -80,9 +80,20 @@
             android:src="@drawable/ic_switch_cam"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.25"
+            app:layout_constraintEnd_toStartOf="@id/btnSpeaker"
             app:layout_constraintStart_toEndOf="@id/btnEnd"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/btnSpeaker"
+            android:layout_width="@dimen/dp36"
+            android:layout_height="@dimen/dp36"
+            android:background="@drawable/selector_white_btn"
+            android:src="@drawable/ic_speaker_on"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnSwitchCam"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
