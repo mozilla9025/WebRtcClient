@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:splitMotionEvents="false">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:splitMotionEvents="false">
 
     <ImageView
         android:layout_width="@dimen/dp0"
@@ -13,36 +13,47 @@
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogIn"
+        style="@style/AppTheme.GradientedLoginButton"
         android:layout_width="@dimen/dp0"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp86"
+        android:layout_marginTop="@dimen/dp18"
+        android:layout_marginEnd="@dimen/dp86"
         android:layout_marginBottom="@dimen/dp16"
-        android:background="@drawable/selector_gradient_btn"
         android:text="@string/start_fragment_btn_log_in"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/btnSignUp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.55" />
+        app:layout_constraintWidth_percent="0.55"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSignUp"
+        style="@style/AppTheme.SignUpButton"
         android:layout_width="@dimen/dp0"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_outlined_btn"
+        android:layout_marginStart="@dimen/dp86"
+        android:layout_marginTop="@dimen/dp18"
+        android:layout_marginEnd="@dimen/dp86"
         android:text="@string/start_fragment_btn_sign_up"
-        android:textAllCaps="false"
-        android:textColor="@color/mediumGrey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.8"
-        app:layout_constraintWidth_percent="0.55" />
+        app:layout_constraintWidth_percent="0.55"/>
 
+    <app.rtcmeetings.ui.widget.LanguageSelectionView
+        android:id="@+id/viewLanguageSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp20"
+        app:fontFamily="@font/helvetica_neue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

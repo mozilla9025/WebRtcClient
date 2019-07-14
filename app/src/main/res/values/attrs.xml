@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RegisterFormInputView">
+        <attr name="rfiv_text" format="string" />
+        <attr name="rfiv_hint" format="string" />
+        <attr name="rfiv_title" format="string" />
+        <attr name="rfiv_type" format="enum">
+            <enum name="text" value="0" />
+            <enum name="phone" value="1" />
+            <enum name="password" value="2" />
+            <enum name="email" value="3" />
+        </attr>
+        <attr name="rfiv_maxLines" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="ToolbarView">
+        <attr name="tv_action_left_icon" format="reference" />
+        <attr name="tv_action_left_tint" format="color" />
+        <attr name="tv_action_icon" format="reference" />
+        <attr name="tv_action_tint" format="color" />
+        <attr name="tv_text" format="string"/>
+        <attr name="tv_text_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="SearchView">
+        <attr name="sv_hint" format="string" />
+        <attr name="sv_isPhone" format="boolean" />
+    </declare-styleable>
+</resources>

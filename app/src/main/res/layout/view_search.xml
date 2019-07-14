@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etSearch"
+        android:layout_width="@dimen/dp0"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_search_view"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:fontFamily="@font/helvetica_neue_light"
+        android:hint="@string/search_view_hint_search"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
+        android:paddingStart="@dimen/dp40"
+        android:paddingTop="@dimen/dp8"
+        android:paddingEnd="@dimen/dp16"
+        android:paddingBottom="@dimen/dp8"
+        android:singleLine="true"
+        android:textAllCaps="true"
+        android:textColor="@color/textColorDark"
+        android:textColorHint="@color/textColorHintDark"
+        android:textSize="@dimen/sp14"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivSearch"
+        android:layout_width="@dimen/dp16"
+        android:layout_height="@dimen/dp16"
+        android:layout_marginStart="@dimen/dp18"
+        android:src="@drawable/ic_search"
+        android:tint="@color/color4e4e4e"
+        app:layout_constraintBottom_toBottomOf="@id/etSearch"
+        app:layout_constraintStart_toStartOf="@id/etSearch"
+        app:layout_constraintTop_toTopOf="@id/etSearch" />
+
+    <!--<androidx.appcompat.widget.AppCompatImageButton-->
+        <!--android:id="@+id/ibSearchCancel"-->
+        <!--android:layout_width="@dimen/dp20"-->
+        <!--android:layout_height="@dimen/dp20"-->
+        <!--android:layout_marginEnd="@dimen/dp18"-->
+        <!--android:background="?attr/selectableItemBackgroundBorderless"-->
+        <!--android:padding="@dimen/dp4"-->
+        <!--android:src="@drawable/ic_close"-->
+        <!--android:tint="@color/color4e4e4e"-->
+        <!--android:visibility="visible"-->
+        <!--app:layout_constraintBottom_toBottomOf="@id/etSearch"-->
+        <!--app:layout_constraintEnd_toEndOf="@id/etSearch"-->
+        <!--app:layout_constraintTop_toTopOf="@id/etSearch" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>

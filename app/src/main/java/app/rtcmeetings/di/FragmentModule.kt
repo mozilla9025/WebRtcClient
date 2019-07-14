@@ -1,10 +1,10 @@
 package app.rtcmeetings.di
 
-import app.rtcmeetings.ui.auth.LogInFragment
-import app.rtcmeetings.ui.auth.SignUpFragment
-import app.rtcmeetings.ui.main.MainFragment
-import app.rtcmeetings.ui.p2pcall.P2pCallFragment
-import app.rtcmeetings.ui.start.SplashScreenFragment
+import app.rtcmeetings.ui.module.auth.LogInFragment
+import app.rtcmeetings.ui.module.auth.SignUpFragment
+import app.rtcmeetings.ui.module.main.MainFragment
+import app.rtcmeetings.ui.module.p2pcall.P2pCallFragment
+import app.rtcmeetings.ui.module.start.SplashScreenFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:orientation="vertical">
 
     <ScrollView
         android:layout_width="@dimen/dp0"
         android:layout_height="@dimen/dp0"
+        android:overScrollMode="never"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dp16"
-                android:layout_marginTop="@dimen/dp16">
+                android:layout_marginTop="@dimen/dp30">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvItem"
@@ -52,26 +54,33 @@
                             android:layout_marginEnd="@dimen/dp12"
                             android:text="In case you have something important to discuss in person with nobody else."
                             android:textSize="@dimen/sp16"
+                            android:fontFamily="@font/helvetica_neue_light"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"/>
 
-                        <Button
+                        <TextView
                             android:id="@+id/btnToCall"
                             android:layout_width="@dimen/dp0"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dp12"
-                            android:layout_marginEnd="60dp"
+                            android:layout_marginEnd="@dimen/dp60"
+                            android:gravity="center"
                             android:background="@drawable/selector_gradient_main_action_btn"
                             android:stateListAnimator="@null"
                             android:text="One-to-One Call"
+                            android:paddingTop="@dimen/dp6"
+                            android:paddingBottom="@dimen/dp6"
+                            android:fontFamily="@font/helvetica_neue"
                             android:textAllCaps="false"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sp16"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage" />
+                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -81,7 +90,7 @@
                     android:src="@drawable/img_1"
                     android:translationZ="@dimen/dp2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -118,26 +127,33 @@
                             android:layout_marginEnd="@dimen/dp12"
                             android:text="Leverage your workflow through  instant meetings. Up to 30 people in a room!"
                             android:textSize="@dimen/sp16"
+                            android:fontFamily="@font/helvetica_neue_light"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"/>
 
-                        <Button
+                        <TextView
+                            android:gravity="center"
                             android:layout_width="@dimen/dp0"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dp12"
                             android:layout_marginEnd="60dp"
                             android:background="@drawable/selector_white_btn"
                             android:backgroundTint="@color/mediumGrey"
+                            android:fontFamily="@font/helvetica_neue"
                             android:stateListAnimator="@null"
                             android:text="Create conference"
                             android:textAllCaps="false"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:paddingTop="@dimen/dp6"
+                            android:paddingBottom="@dimen/dp6"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sp16"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage1" />
+                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage1"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -147,7 +163,7 @@
                     android:src="@drawable/img_2"
                     android:translationZ="@dimen/dp2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -184,11 +200,12 @@
                             android:layout_marginEnd="@dimen/dp12"
                             android:text="Keep up with all key decisions by joining conversation in 1 click. Just put an ID!"
                             android:textSize="@dimen/sp16"
+                            android:fontFamily="@font/helvetica_neue_light"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="parent"/>
 
-                        <Button
+                        <TextView
                             android:layout_width="@dimen/dp0"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dp12"
@@ -198,12 +215,18 @@
                             android:stateListAnimator="@null"
                             android:text="Join conference"
                             android:textAllCaps="false"
+                            android:fontFamily="@font/helvetica_neue"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sp16"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:paddingTop="@dimen/dp6"
+                            android:paddingBottom="@dimen/dp6"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage2" />
+                            app:layout_constraintTop_toBottomOf="@id/tvMainItemMessage2"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -213,10 +236,10 @@
                     android:src="@drawable/img_3"
                     android:translationZ="@dimen/dp2"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btnLogOut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -224,12 +247,14 @@
                 android:layout_marginTop="@dimen/dp24"
                 android:layout_marginBottom="@dimen/dp24"
                 android:background="?android:selectableItemBackground"
-                android:text="Log out"
+                android:text="@string/log_out"
+                android:fontFamily="@font/helvetica_neue"
+                android:textSize="@dimen/sp14"
                 android:textAllCaps="false"
                 android:textColor="@color/mediumGrey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"/>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

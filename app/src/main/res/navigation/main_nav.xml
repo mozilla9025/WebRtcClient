@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/splashScreenFragment"
-        android:name="app.rtcmeetings.ui.start.SplashScreenFragment"
+        android:name="app.rtcmeetings.ui.module.start.SplashScreenFragment"
         android:label="SplashScreenFragment"
         tools:layout="@layout/fragment_splash_screen">
         <action
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/startFragment"
-        android:name="app.rtcmeetings.ui.start.StartFragment"
+        android:name="app.rtcmeetings.ui.module.start.StartFragment"
         android:label="StartFragment"
         tools:layout="@layout/fragment_start">
         <action
@@ -35,17 +35,18 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="app.rtcmeetings.ui.auth.SignUpFragment"
+        android:name="app.rtcmeetings.ui.module.auth.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_signup">
         <action
             android:id="@+id/action_signUpFragment_to_logInFragment"
             app:destination="@id/logInFragment" />
+        <action android:id="@+id/action_signUpFragment_to_mainFragment" app:destination="@id/mainFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/logInFragment"
-        android:name="app.rtcmeetings.ui.auth.LogInFragment"
+        android:name="app.rtcmeetings.ui.module.auth.LogInFragment"
         android:label="LogInFragment"
         tools:layout="@layout/fragment_login">
         <action
@@ -55,7 +56,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="app.rtcmeetings.ui.main.MainFragment"
+        android:name="app.rtcmeetings.ui.module.main.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main">
         <action
@@ -71,7 +72,7 @@
 
     <fragment
         android:id="@+id/p2pCallFragment"
-        android:name="app.rtcmeetings.ui.p2pcall.P2pCallFragment"
+        android:name="app.rtcmeetings.ui.module.p2pcall.P2pCallFragment"
         android:label="P2pCallFragment"
         tools:layout="@layout/fragment_p2p_call" />
 </navigation>

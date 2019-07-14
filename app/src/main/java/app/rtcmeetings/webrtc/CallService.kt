@@ -13,7 +13,7 @@ import app.rtcmeetings.network.request.CallRequest
 import app.rtcmeetings.network.request.IceExchange
 import app.rtcmeetings.network.ws.WsEvent
 import app.rtcmeetings.network.ws.WsService
-import app.rtcmeetings.ui.CallActivity
+import app.rtcmeetings.ui.module.CallActivity
 import app.rtcmeetings.webrtc.audio.CallAudioManager
 import app.rtcmeetings.webrtc.video.CamSide
 import app.rtcmeetings.webrtc.video.ProxyVideoSink

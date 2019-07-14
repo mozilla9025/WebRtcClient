@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">WebRtcClient</string>
+    <string name="start_fragment_btn_log_in">chn_Log In</string>
+    <string name="start_fragment_btn_sign_up">chn_Sign Up</string>
+    <string name="sign_up_fragment_btn_sign_up">chn_Sign Up</string>
+    <string name="log_in_fragment_btn_log_in">chn_Log In</string>
+    <string name="start_fragment_label_language">chn_Language</string>
+    <string name="application_language_english">chn_English</string>
+    <string name="application_language_russian">chn_Chines</string>
+    <string name="login_fragment_title_welcome_back">chn_Welcome back!</string>
+    <string name="login_fragment_label_phone_number">chn_Phone number</string>
+    <string name="login_fragment_label_password">chn_Password</string>
+    <string name="login_fragment_hint_enter_password">chn_Enter your password</string>
+    <string name="login_fragment_button_sing_in">chn_Sign in</string>
+    <string name="error_field_is_empty">chn_Field is empty</string>
+    <string name="error_ivalid_email_format">chn_Invalid email format</string>
+    <string name="error_name_too_short">chn_Name is too short</string>
+    <string name="error_name_too_long">chn_Name is too long</string>
+    <string name="error_password_must_be_at_least_characters_long">chn_Password must be at least 8 characters long</string>
+    <string name="error_invalid_phone_number">chn_Invalid phone number format</string>
+    <string name="error_can_not_connect_to_server">chn_Can not connect to server. Check your internet connection and try again</string>
+    <string name="login_framgent_login_failed">chn_Log in failed</string>
+    <string name="fragment_register_title">chn_Create new account</string>
+    <string name="register_fragment_email_field">chn_Email</string>
+    <string name="register_fragment_enter_your_name">chn_Enter your name</string>
+    <string name="register_fragment_email">chn_Email</string>
+    <string name="fragment_signup_signup_button">chn_Sign up</string>
+    <string name="register_fragment_registration_error">chn_Registration error</string>
+    <string name="toolbar_title_one_to_one_call">chn_One-to-One Call</string>
+    <string name="call_fragment_call_button">chn_Call</string>
+    <string name="call_fragment_hint_enter_user_s_id">chn_Enter User`s ID</string>
+    <string name="cannot_get_current_user_profile">chn_Can not get current user profile</string>
+    <string name="search_view_hint_search">chn_Search</string>
+    <string name="log_out">chn_Log out</string>
+</resources>

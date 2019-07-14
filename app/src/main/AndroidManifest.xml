@@ -39,7 +39,7 @@
             android:theme="@style/AppTheme">
 
         <activity
-                android:name=".ui.MainActivity"
+                android:name=".ui.module.MainActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -50,7 +50,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".ui.CallActivity"
+                android:name=".ui.module.CallActivity"
                 android:launchMode="singleTop"/>
 
         <service android:name=".network.ws.WsService"/>
