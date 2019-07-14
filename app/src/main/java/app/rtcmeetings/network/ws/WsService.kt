@@ -45,9 +45,11 @@ class WsService : Service() {
     private val handler = Handler()
 
     private val connectionRunnable = Runnable {
-        if (!socket?.connected()!!) {
-            closeConnection()
-            createConnection()
+        socket?.let {
+            if (!it.connected()) {
+                closeConnection()
+                createConnection()
+            }
         }
         checkConnection()
     }
@@ -139,17 +141,17 @@ class WsService : Service() {
     private fun connect() {
         if (socket == null || !socket?.connected()!!) {
             disposables.add(
-                    checkAuthUseCase.execute()
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
-                                when (it) {
-                                    true -> createConnection()
-                                    else -> closeConnection()
-                                }
-                            }, {
-                                loge(it)
-                                closeConnection()
-                            })
+                checkAuthUseCase.execute()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        when (it) {
+                            true -> createConnection()
+                            else -> closeConnection()
+                        }
+                    }, {
+                        loge(it)
+                        closeConnection()
+                    })
             )
             checkConnection()
         }
@@ -162,8 +164,8 @@ class WsService : Service() {
 
     private fun createConnection() {
         wsClient = WsClient(
-                BuildConfig.WS_URL,
-                SocketQuery("token", authStorage.getRawToken())
+            BuildConfig.WS_URL,
+            SocketQuery("token", authStorage.getRawToken())
         )
 
         wsClient!!.connect()

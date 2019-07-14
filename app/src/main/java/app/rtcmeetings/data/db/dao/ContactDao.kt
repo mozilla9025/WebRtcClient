@@ -4,12 +4,14 @@ import androidx.room.*
 import app.rtcmeetings.data.db.dbentity.Contact
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface ContactDao {
 
     @Query("SELECT * FROM $TABLE_NAME")
-    fun getContacts(): Flowable<List<Contact>>
+    fun getContacts(): Single<List<Contact>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(contact: Contact): Completable

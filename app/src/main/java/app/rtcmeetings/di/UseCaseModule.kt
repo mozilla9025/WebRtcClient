@@ -26,4 +26,7 @@ interface UseCaseModule {
     @Binds
     fun bindGetUserUseCase(useCase: GetUserUseCaseImpl): GetUserUseCase
 
+    @Binds
+    fun bindContactUseCase(useCase: ContactUseCaseImpl): ContactUseCase
+
 }

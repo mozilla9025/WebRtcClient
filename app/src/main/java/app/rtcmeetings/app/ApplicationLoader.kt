@@ -15,6 +15,7 @@ class ApplicationLoader : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        LocaleManager.setLocale(this)
         ProcessLifecycleOwner.get().lifecycle
                 .addObserver(ApplicationLifecycleObserver(this@ApplicationLoader))
     }
@@ -25,12 +26,6 @@ class ApplicationLoader : DaggerApplication() {
         androidInjector = DaggerAppComponent.builder()
             .application(this)
             .build()
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        LocaleManager.setLocale(this)
     }
 
     companion object {
