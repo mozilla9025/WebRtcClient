@@ -41,7 +41,9 @@
         <action
             android:id="@+id/action_signUpFragment_to_logInFragment"
             app:destination="@id/logInFragment" />
-        <action android:id="@+id/action_signUpFragment_to_mainFragment" app:destination="@id/mainFragment"/>
+        <action
+            android:id="@+id/action_signUpFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
 
     <fragment
@@ -74,5 +76,14 @@
         android:id="@+id/p2pCallFragment"
         android:name="app.rtcmeetings.ui.module.p2pcall.P2pCallFragment"
         android:label="P2pCallFragment"
-        tools:layout="@layout/fragment_p2p_call" />
+        tools:layout="@layout/fragment_p2p_call">
+        <action
+            android:id="@+id/action_p2pCallFragment_to_contactsFragment"
+            app:destination="@id/contactsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="app.rtcmeetings.ui.module.contacts.ContactsFragment"
+        android:label="ContactsFragment"
+        tools:layout="@layout/fragment_contacts" />
 </navigation>

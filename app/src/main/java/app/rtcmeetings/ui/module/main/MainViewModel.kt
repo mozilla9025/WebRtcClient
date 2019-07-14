@@ -14,8 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val logOutUseCase: LogOutUseCase,
-    private val contactUseCase: ContactUseCase
+    private val logOutUseCase: LogOutUseCase
 ) : BaseViewModel() {
 
     val logOutLiveData: MutableLiveData<Boolean> by lazy {
@@ -24,21 +23,6 @@ class MainViewModel @Inject constructor(
 
     fun startWsService(context: Context) {
         WsService.connect(context)
-        add(
-            contactUseCase.addContact(Contact(8, "nui", "hui"))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { logd("ADDED") },
-                    { loge(it) }
-                )
-        )
-
-        add(
-            contactUseCase.getContacts()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ logi("$it") },
-                    { loge(it) })
-        )
     }
 
     fun disconnectWs(context: Context) {

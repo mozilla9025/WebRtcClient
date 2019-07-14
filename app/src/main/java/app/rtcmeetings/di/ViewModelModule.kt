@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import app.rtcmeetings.ui.module.auth.LogInViewModel
 import app.rtcmeetings.ui.module.auth.SignUpViewModel
+import app.rtcmeetings.ui.module.contacts.ContactsViewModel
 import app.rtcmeetings.ui.module.main.MainViewModel
 import app.rtcmeetings.ui.module.p2pcall.P2pCallViewModel
 import app.rtcmeetings.ui.module.start.SplashScreenViewModel
@@ -41,5 +42,10 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(P2pCallViewModel::class)
     fun bindP2pCallViewModel(viewModel: P2pCallViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactsViewModel::class)
+    fun bindContactsViewModel(viewModel: ContactsViewModel): ViewModel
 
 }

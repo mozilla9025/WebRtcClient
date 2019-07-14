@@ -2,6 +2,7 @@ package app.rtcmeetings.di
 
 import app.rtcmeetings.ui.module.auth.LogInFragment
 import app.rtcmeetings.ui.module.auth.SignUpFragment
+import app.rtcmeetings.ui.module.contacts.ContactsFragment
 import app.rtcmeetings.ui.module.main.MainFragment
 import app.rtcmeetings.ui.module.p2pcall.P2pCallFragment
 import app.rtcmeetings.ui.module.start.SplashScreenFragment
@@ -25,4 +26,7 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeP2pCallFragment(): P2pCallFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeContactsFragment(): ContactsFragment
 }

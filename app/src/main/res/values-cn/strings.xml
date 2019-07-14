@@ -32,4 +32,6 @@
     <string name="cannot_get_current_user_profile">chn_Can not get current user profile</string>
     <string name="search_view_hint_search">chn_Search</string>
     <string name="log_out">chn_Log out</string>
+
+    <string name="fragment_contacts_title">Contacts</string>
 </resources>

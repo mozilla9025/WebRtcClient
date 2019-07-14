@@ -38,9 +38,9 @@ class P2pCallFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_p2p_call, container, false)
     }
@@ -61,11 +61,11 @@ class P2pCallFragment : BaseFragment() {
             when {
                 it != null -> {
                     val spannable = HtmlCompat.fromHtml(
-                        String.format(
-                            "Your current User ID is ID <strong>%s</strong>. In order to call to User, please enter his/her User ID below.",
-                            it.id.toString()
-                        ),
-                        0
+                            String.format(
+                                    "Your current User ID is ID <strong>%s</strong>. In order to call to User, please enter his/her User ID below.",
+                                    it.id.toString()
+                            ),
+                            0
                     )
                     tvTitle.text = spannable
                 }
@@ -77,31 +77,36 @@ class P2pCallFragment : BaseFragment() {
             etId.text?.let {
                 if (it.isNotBlank() && !it.contains("^[a-zA-Z]*\$")) {
                     TedPermission.with(activity!!)
-                        .setPermissions(
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                            Manifest.permission.RECORD_AUDIO
-                        )
-                        .setPermissionListener(object : PermissionListener {
-                            override fun onPermissionGranted() {
-                                viewModel.getUser(it.toString().i)
-                            }
+                            .setPermissions(
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                                    Manifest.permission.RECORD_AUDIO
+                            )
+                            .setPermissionListener(object : PermissionListener {
+                                override fun onPermissionGranted() {
+                                    viewModel.getUser(it.toString().i)
+                                }
 
-                            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-                                Toast.makeText(context!!, "Required permissions denied", Toast.LENGTH_SHORT).show()
-                            }
-                        }).check()
+                                override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                                    Toast.makeText(context!!, "Required permissions denied", Toast.LENGTH_SHORT).show()
+                                }
+                            }).check()
                 } else Toast.makeText(context!!, "ID has wrong type", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        btnContacts.setOnClickListener {
+            Navigation.findNavController(view)
+                    .navigate(P2pCallFragmentDirections.actionP2pCallFragmentToContactsFragment())
         }
     }
 
     override fun onStart() {
         super.onStart()
         activity?.bindService(
-            Intent(context!!, WsService::class.java),
-            serviceConnection,
-            Context.BIND_AUTO_CREATE
+                Intent(context!!, WsService::class.java),
+                serviceConnection,
+                Context.BIND_AUTO_CREATE
         )
     }
 
