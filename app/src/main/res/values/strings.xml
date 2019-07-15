@@ -35,4 +35,6 @@
 
 
     <string name="fragment_contacts_title">Contacts</string>
+    <string name="p2p_call_fragment_message">
+        <![CDATA[Your current User ID is <strong>%s</strong>. In order to call to User, please enter his/her User ID below.]]></string>
 </resources>

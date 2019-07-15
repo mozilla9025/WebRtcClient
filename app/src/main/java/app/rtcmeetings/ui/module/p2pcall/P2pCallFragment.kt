@@ -62,7 +62,7 @@ class P2pCallFragment : BaseFragment() {
                 it != null -> {
                     val spannable = HtmlCompat.fromHtml(
                             String.format(
-                                    "Your current User ID is ID <strong>%s</strong>. In order to call to User, please enter his/her User ID below.",
+                                    getString(R.string.p2p_call_fragment_message),
                                     it.id.toString()
                             ),
                             0
