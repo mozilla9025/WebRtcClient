@@ -24,7 +24,7 @@
     <color name="textColorHint">#bcbcbc</color>
     <color name="textColorHintDark">#686868</color>
 
-    <color name="transparent_white">#92DBDBDB</color>
+    <color name="transparent_white">#CCDBDBDB</color>
     <color name="transparent">#00FFFFFF</color>
 
     <color name="grey">#bbbbbb</color>
@@ -32,4 +32,6 @@
     <color name="color4e4e4e">#4e4e4e</color>
     <color name="colorf4f4f4">#f4f4f4</color>
     <color name="color313131">#313131</color>
+
+    <color name="callButtonsTint">#555555</color>
 </resources>

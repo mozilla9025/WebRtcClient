@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/clActiveCallRoot"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:ignore="ContentDescription">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:id="@+id/clActiveCallRoot"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:orientation="vertical"
+                                                   tools:ignore="ContentDescription">
 
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/remoteVideo"
@@ -15,7 +15,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/localVideo"
@@ -25,7 +25,7 @@
         app:layout_constraintDimensionRatio="V,3:4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.3" />
+        app:layout_constraintWidth_percent="0.3"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clControlBtns"
@@ -43,11 +43,12 @@
             android:layout_height="@dimen/dp36"
             android:background="@drawable/selector_white_btn"
             android:src="@drawable/ic_mic"
-            android:tint="@color/white"
+            android:tint="@color/callButtonsTint"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnCam"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageButton
             android:id="@+id/btnCam"
@@ -55,11 +56,12 @@
             android:layout_height="@dimen/dp36"
             android:background="@drawable/selector_white_btn"
             android:src="@drawable/ic_cam"
-            android:tint="@color/white"
+            android:tint="@color/callButtonsTint"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnEnd"
             app:layout_constraintStart_toEndOf="@id/btnMic"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageButton
             android:id="@+id/btnEnd"
@@ -67,10 +69,11 @@
             android:layout_height="@dimen/dp46"
             android:background="@drawable/selector_red_btn"
             android:src="@drawable/ic_call_end"
+            android:scaleType="centerCrop"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <ImageButton
             android:id="@+id/btnSwitchCam"
@@ -78,11 +81,11 @@
             android:layout_height="@dimen/dp36"
             android:background="@drawable/selector_white_btn"
             android:src="@drawable/ic_switch_cam"
-            android:tint="@color/white"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnSpeaker"
             app:layout_constraintStart_toEndOf="@id/btnEnd"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageButton
             android:id="@+id/btnSpeaker"
@@ -90,11 +93,12 @@
             android:layout_height="@dimen/dp36"
             android:background="@drawable/selector_white_btn"
             android:src="@drawable/ic_speaker_on"
-            android:tint="@color/white"
+            android:scaleType="centerCrop"
+            android:tint="@color/callButtonsTint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/btnSwitchCam"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
