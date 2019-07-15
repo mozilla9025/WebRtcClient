@@ -35,7 +35,7 @@ class ToolbarView @JvmOverloads constructor(context: Context, attributes: Attrib
                 ib_action.visibility = View.GONE
             }
 
-            val actionIconTint = a.getColor(R.styleable.ToolbarView_tv_action_tint, ContextCompat.getColor(context, R.color.textColor))
+            val actionIconTint = a.getColor(R.styleable.ToolbarView_tv_action_tint, -1)
             setActionIconTint(actionIconTint)
 
             val text = a.getString(R.styleable.ToolbarView_tv_text)
@@ -70,7 +70,8 @@ class ToolbarView @JvmOverloads constructor(context: Context, attributes: Attrib
     }
 
     fun setActionIconTint(color: Int) {
-        ib_action.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
+        if (color > 0)
+            ib_action.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
     }
 
     fun setText(text: String) {
@@ -88,6 +89,7 @@ class ToolbarView @JvmOverloads constructor(context: Context, attributes: Attrib
     fun setOnActionClickListener(onClickListener: () -> Unit) {
         ib_action.setOnClickListener { onClickListener.invoke() }
     }
+
     fun setOnActionLeftClickListener(onClickListener: () -> Unit) {
         ib_action_left.setOnClickListener { onClickListener.invoke() }
     }

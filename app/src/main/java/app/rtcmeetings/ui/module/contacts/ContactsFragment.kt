@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,10 +19,14 @@ import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseFragment
 import app.rtcmeetings.data.db.dbentity.Contact
 import app.rtcmeetings.data.db.dbentity.toUser
+import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.network.result.Status
 import app.rtcmeetings.network.ws.WsService
+import app.rtcmeetings.util.i
 import app.rtcmeetings.webrtc.CallEvent
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.dialog_add_contact.view.*
+import kotlinx.android.synthetic.main.dialog_find_contact.view.*
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import javax.inject.Inject
 
@@ -64,6 +69,43 @@ class ContactsFragment : BaseFragment() {
         viewModel.getContacts()
 
         toolbarView.setOnActionLeftClickListener { onBackPressed() }
+        toolbarView.setOnActionClickListener { showSearchDialog() }
+    }
+
+    private fun showSearchDialog() {
+        val view = LayoutInflater.from(context!!).inflate(R.layout.dialog_find_contact, null)
+
+        AlertDialog.Builder(context!!)
+                .setCancelable(false)
+                .setView(view)
+                .setPositiveButton("Find") { dialog, _ ->
+                    val text = view.etSearch.text
+                    text?.let {
+                        if (text.isNotBlank() && !text.contains("^[a-zA-Z]*\$")) {
+                            viewModel.findUser(text.toString().i)
+                            dialog.dismiss()
+                        } else Toast.makeText(context!!, "ID has wrong type", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .create()
+                .show()
+    }
+
+    private fun showAddDialog(user: User) {
+        val view = LayoutInflater.from(context!!).inflate(R.layout.dialog_add_contact, null)
+        view.tvUserName.text = user.name
+
+        AlertDialog.Builder(context!!)
+                .setCancelable(false)
+                .setView(view)
+                .setPositiveButton("Add") { dialog, _ ->
+                    viewModel.addContact(user)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .create()
+                .show()
     }
 
     override fun onBackPressed() {
@@ -98,10 +140,26 @@ class ContactsFragment : BaseFragment() {
         viewModel.addContactsLiveData.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
+                    viewModel.getContacts()
                 }
                 Status.LOADING -> {
                 }
                 Status.FAILURE -> {
+                }
+            }
+        })
+
+        viewModel.userLiveData.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    it.data?.let { user ->
+                        showAddDialog(user)
+                    }
+                }
+                Status.LOADING -> {
+                }
+                Status.FAILURE -> {
+                    Toast.makeText(context!!, "User not found", Toast.LENGTH_SHORT).show()
                 }
             }
         })

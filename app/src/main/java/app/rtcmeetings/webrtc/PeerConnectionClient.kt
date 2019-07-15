@@ -169,14 +169,14 @@ class PeerConnectionClient private constructor(
         val iceServers = listOf(
                 PeerConnection.IceServer
                         .builder("turn:80.240.24.249:3478")
-                        .setUsername("webrtc")
-                        .setPassword("turnpassword")
+                        .setUsername("423423536097752177")
+                        .setPassword("Wa8t1DbPNSsbFabcHs+hA2enFhk=")
                         .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
                         .createIceServer(),
                 PeerConnection.IceServer
                         .builder("stun:80.240.24.249:3478")
-                        .setUsername("webrtc")
-                        .setPassword("turnpassword")
+                        .setUsername("423423536097752177")
+                        .setPassword("Wa8t1DbPNSsbFabcHs+hA2enFhk=")
                         .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
                         .createIceServer()
         )
