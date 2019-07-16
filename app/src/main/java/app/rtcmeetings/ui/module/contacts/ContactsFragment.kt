@@ -24,6 +24,8 @@ import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.helper.CheckHelper
 import app.rtcmeetings.network.result.Status
 import app.rtcmeetings.network.ws.WsService
+import app.rtcmeetings.util.i
+import app.rtcmeetings.util.logd
 import app.rtcmeetings.webrtc.CallEvent
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -84,6 +86,11 @@ class ContactsFragment : BaseFragment() {
         toolbarView.run {
             setOnActionLeftClickListener { onBackPressed() }
             setOnActionClickListener { showSearchDialog() }
+        }
+
+        searchView.onTextChangedCallback = {
+            logd(it)
+            contactsAdapter?.filter?.filter(it)
         }
     }
 
