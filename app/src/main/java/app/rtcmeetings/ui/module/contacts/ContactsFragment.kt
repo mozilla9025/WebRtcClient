@@ -23,6 +23,7 @@ import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.network.result.Status
 import app.rtcmeetings.network.ws.WsService
 import app.rtcmeetings.util.i
+import app.rtcmeetings.util.logd
 import app.rtcmeetings.webrtc.CallEvent
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.dialog_add_contact.view.*
@@ -36,6 +37,7 @@ class ContactsFragment : BaseFragment() {
     lateinit var viewModel: ContactsViewModel
 
     private var wsService: WsService? = null
+    private var contactsAdapter: ContactsAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +45,9 @@ class ContactsFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_contacts, container, false)
     }
@@ -53,9 +55,9 @@ class ContactsFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         activity?.bindService(
-                Intent(context!!, WsService::class.java),
-                serviceConnection,
-                Context.BIND_AUTO_CREATE
+            Intent(context!!, WsService::class.java),
+            serviceConnection,
+            Context.BIND_AUTO_CREATE
         )
     }
 
@@ -70,26 +72,31 @@ class ContactsFragment : BaseFragment() {
 
         toolbarView.setOnActionLeftClickListener { onBackPressed() }
         toolbarView.setOnActionClickListener { showSearchDialog() }
+
+        searchView.onTextChangedCallback = {
+            logd(it)
+            contactsAdapter?.filter?.filter(it)
+        }
     }
 
     private fun showSearchDialog() {
         val view = LayoutInflater.from(context!!).inflate(R.layout.dialog_find_contact, null)
 
         AlertDialog.Builder(context!!)
-                .setCancelable(false)
-                .setView(view)
-                .setPositiveButton("Find") { dialog, _ ->
-                    val text = view.etSearch.text
-                    text?.let {
-                        if (text.isNotBlank() && !text.contains("^[a-zA-Z]*\$")) {
-                            viewModel.findUser(text.toString().i)
-                            dialog.dismiss()
-                        } else Toast.makeText(context!!, "ID has wrong type", Toast.LENGTH_SHORT).show()
-                    }
+            .setCancelable(false)
+            .setView(view)
+            .setPositiveButton("Find") { dialog, _ ->
+                val text = view.etSearch.text
+                text?.let {
+                    if (text.isNotBlank() && !text.contains("^[a-zA-Z]*\$")) {
+                        viewModel.findUser(text.toString().i)
+                        dialog.dismiss()
+                    } else Toast.makeText(context!!, "ID has wrong type", Toast.LENGTH_SHORT).show()
                 }
-                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                .create()
-                .show()
+            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
     }
 
     private fun showAddDialog(user: User) {
@@ -97,15 +104,15 @@ class ContactsFragment : BaseFragment() {
         view.tvUserName.text = user.name
 
         AlertDialog.Builder(context!!)
-                .setCancelable(false)
-                .setView(view)
-                .setPositiveButton("Add") { dialog, _ ->
-                    viewModel.addContact(user)
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                .create()
-                .show()
+            .setCancelable(false)
+            .setView(view)
+            .setPositiveButton("Add") { dialog, _ ->
+                viewModel.addContact(user)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .create()
+            .show()
     }
 
     override fun onBackPressed() {
@@ -125,9 +132,10 @@ class ContactsFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     rvContacts.run {
                         layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
-                        adapter = ContactsAdapter(it.data) { contact ->
+                        contactsAdapter = ContactsAdapter(it.data) { contact ->
                             startCall(contact)
                         }
+                        adapter = contactsAdapter
                     }
                 }
                 Status.LOADING -> {
