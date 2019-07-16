@@ -145,34 +145,34 @@ class CallService : Service(), WebRtcClientListener {
     override fun onAnswerGenerated(sdp: SessionDescription) {
         answerSdpSat = true
         disposables.add(
-            callUseCase.acceptCall(callId!!, sdp.description, socketId!!)
-                .subscribe({
-                    callState = CallState.INCOMING_CONNECTING
-                    callEventListener?.onCreatingConnection()
-                    sendLocalIceCandidates()
-                }, {
-                    callState = CallState.FAILED
-                    callEventListener?.onFail()
-                    clearAndFinish()
-                })
+                callUseCase.acceptCall(callId!!, sdp.description, socketId!!)
+                        .subscribe({
+                            callState = CallState.INCOMING_CONNECTING
+                            callEventListener?.onCreatingConnection()
+                            sendLocalIceCandidates()
+                        }, {
+                            callState = CallState.FAILED
+                            callEventListener?.onFail()
+                            clearAndFinish()
+                        })
         )
     }
 
     override fun onOfferGenerated(sdp: SessionDescription) {
         disposables.add(
-            callUseCase.startCall(
-                socketId!!,
-                sdp.description,
-                interlocutor?.id!!
-            ).subscribe({ id ->
-                callId = id
-                callState = CallState.OUTGOING_CONNECTING
-                callEventListener?.onCreatingConnection()
-            }, {
-                callState = CallState.FAILED
-                callEventListener?.onFail()
-                CallEvent.terminate(this@CallService)
-            })
+                callUseCase.startCall(
+                        socketId!!,
+                        sdp.description,
+                        interlocutor?.id!!
+                ).subscribe({ id ->
+                    callId = id
+                    callState = CallState.OUTGOING_CONNECTING
+                    callEventListener?.onCreatingConnection()
+                }, {
+                    callState = CallState.FAILED
+                    callEventListener?.onFail()
+                    CallEvent.terminate(this@CallService)
+                })
         )
     }
 
@@ -183,6 +183,7 @@ class CallService : Service(), WebRtcClientListener {
         cameraSide = webRtcClient?.getCameraSide()
         isSpeakerEnabled = webRtcClient?.localVideoEnabled ?: false
         audioManager.startCommunication(true)
+        audioManager.setSpeakerEnabled(isSpeakerEnabled)
         callEventListener?.onConnect()
     }
 
@@ -237,9 +238,9 @@ class CallService : Service(), WebRtcClientListener {
         audioManager.stopIncomingRinger()
         callId?.let {
             disposables.add(
-                callUseCase.declineCall(it)
-                    .subscribe({ clearAndFinish() },
-                        { clearAndFinish() })
+                    callUseCase.declineCall(it)
+                            .subscribe({ clearAndFinish() },
+                                    { clearAndFinish() })
             )
         } ?: clearAndFinish()
     }
@@ -247,9 +248,9 @@ class CallService : Service(), WebRtcClientListener {
     private fun handleCancelOutgoingCall() {
         callId?.let {
             disposables.add(
-                callUseCase.cancelCall(it)
-                    .subscribe({ clearAndFinish() },
-                        { clearAndFinish() })
+                    callUseCase.cancelCall(it)
+                            .subscribe({ clearAndFinish() },
+                                    { clearAndFinish() })
             )
         } ?: clearAndFinish()
     }
@@ -257,9 +258,9 @@ class CallService : Service(), WebRtcClientListener {
     private fun handleFinishCall() {
         callId?.let {
             disposables.add(
-                callUseCase.finishCall(it)
-                    .subscribe({ clearAndFinish() },
-                        { clearAndFinish() })
+                    callUseCase.finishCall(it)
+                            .subscribe({ clearAndFinish() },
+                                    { clearAndFinish() })
             )
         } ?: clearAndFinish()
     }
@@ -362,27 +363,29 @@ class CallService : Service(), WebRtcClientListener {
             userId = interlocutor!!.id
             event = WsEvent.ICE_EXCHANGE
             payload = gson.toJson(
-                IceExchange(
-                    iceCandidate.sdpMid,
-                    iceCandidate.sdpMLineIndex,
-                    iceCandidate.sdp
-                )
+                    IceExchange(
+                            iceCandidate.sdpMid,
+                            iceCandidate.sdpMLineIndex,
+                            iceCandidate.sdp
+                    )
             )
         }
         WsService.emit(this@CallService, gson.toJson(callRequest))
     }
 
     private fun sendLocalIceCandidates() {
-        iceCandidateList.forEach { sendIceCandidate(it) }
-        iceCandidateList.clear()
+        synchronized(iceCandidateList) {
+            iceCandidateList.forEach { sendIceCandidate(it) }
+            iceCandidateList.clear()
+        }
     }
 
     private fun initWebRtc() {
         webRtcClient = PeerConnectionClient.getInstance(
-            applicationContext,
-            eglBase,
-            localVideoSinkProxy,
-            remoteVideoSinkProxy
+                applicationContext,
+                eglBase,
+                localVideoSinkProxy,
+                remoteVideoSinkProxy
         )
         webRtcClient!!.webRtcClientListener = this
     }
@@ -434,36 +437,36 @@ class CallService : Service(), WebRtcClientListener {
     private fun getNotification(): Notification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("call", "WebRtcCall", NotificationManager.IMPORTANCE_DEFAULT)
-                .apply {
-                    importance = NotificationManager.IMPORTANCE_DEFAULT
-                    enableVibration(false)
-                }
+                    .apply {
+                        importance = NotificationManager.IMPORTANCE_DEFAULT
+                        enableVibration(false)
+                    }
 
             val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             nm.createNotificationChannel(channel)
 
             val contentIntent = PendingIntent.getActivity(
-                this, 0,
-                Intent(this, CallActivity::class.java), 0
+                    this, 0,
+                    Intent(this, CallActivity::class.java), 0
             )
             return Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_accept_call)
-                .setWhen(System.currentTimeMillis())
-                .setChannelId(channel.id)
-                .setContentTitle(getText(R.string.app_name))
-                .setContentIntent(contentIntent)
-                .build()
+                    .setSmallIcon(R.drawable.ic_accept_call)
+                    .setWhen(System.currentTimeMillis())
+                    .setChannelId(channel.id)
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentIntent(contentIntent)
+                    .build()
         } else {
             val contentIntent = PendingIntent.getActivity(
-                this, 0,
-                Intent(this, CallActivity::class.java), 0
+                    this, 0,
+                    Intent(this, CallActivity::class.java), 0
             )
             return Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_accept_call)
-                .setWhen(System.currentTimeMillis())
-                .setContentTitle(getText(R.string.app_name))
-                .setContentIntent(contentIntent)
-                .build()
+                    .setSmallIcon(R.drawable.ic_accept_call)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentIntent(contentIntent)
+                    .build()
         }
     }
 

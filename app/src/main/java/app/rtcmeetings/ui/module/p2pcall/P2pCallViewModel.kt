@@ -20,6 +20,11 @@ class P2pCallViewModel @Inject constructor(
         MutableLiveData<User>()
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        userLiveData.value = null
+    }
+
     fun getUser(id: Int) {
         add(getUserUseCase.getUserById(id)
                 .observeOn(AndroidSchedulers.mainThread())

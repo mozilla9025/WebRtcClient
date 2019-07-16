@@ -14,10 +14,10 @@ import org.webrtc.audio.AudioDeviceModule
 import org.webrtc.audio.JavaAudioDeviceModule
 
 class PeerConnectionClient private constructor(
-    private val appContext: Context,
-    private val rootEglBase: EglBase,
-    private val localVideoSink: VideoSink,
-    private val remoteVideoSink: VideoSink
+        private val appContext: Context,
+        private val rootEglBase: EglBase,
+        private val localVideoSink: VideoSink,
+        private val remoteVideoSink: VideoSink
 ) {
 
     var webRtcClientListener: WebRtcClientListener? = null
@@ -53,8 +53,8 @@ class PeerConnectionClient private constructor(
     private var remoteSdpSat = false
 
     private val javaAudioDeviceModule: AudioDeviceModule =
-        JavaAudioDeviceModule.builder(appContext)
-            .createAudioDeviceModule()
+            JavaAudioDeviceModule.builder(appContext)
+                    .createAudioDeviceModule()
 
     private val pcObserver = object : PeerConnection.Observer {
 
@@ -167,18 +167,18 @@ class PeerConnectionClient private constructor(
     private fun createPeerConnection() {
 
         val iceServers = listOf(
-            PeerConnection.IceServer
-                .builder("turn:47.254.144.27:3478")
-                .setUsername("anysa")
-                .setPassword("anysa")
-                .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
-                .createIceServer(),
-            PeerConnection.IceServer
-                .builder("stun:47.254.144.27:3478")
-                .setUsername("anysa")
-                .setPassword("anysa")
-                .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
-                .createIceServer()
+                PeerConnection.IceServer
+                        .builder("turn:80.240.24.249:3478")
+                        .setUsername("423423536097752177")
+                        .setPassword("Wa8t1DbPNSsbFabcHs+hA2enFhk=")
+                        .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
+                        .createIceServer(),
+                PeerConnection.IceServer
+                        .builder("stun:80.240.24.249:3478")
+                        .setUsername("423423536097752177")
+                        .setPassword("Wa8t1DbPNSsbFabcHs+hA2enFhk=")
+                        .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
+                        .createIceServer()
         )
 
         val rtcConfig = PeerConnection.RTCConfiguration(iceServers).apply {
@@ -231,8 +231,8 @@ class PeerConnectionClient private constructor(
 
     private fun createPeerConnectionFactory() {
         PeerConnectionFactory.initialize(
-            PeerConnectionFactory.InitializationOptions.builder(appContext)
-                .createInitializationOptions()
+                PeerConnectionFactory.InitializationOptions.builder(appContext)
+                        .createInitializationOptions()
         )
 
         val encoderFactory = DefaultVideoEncoderFactory(rootEglBase.eglBaseContext, true, true)
@@ -292,11 +292,12 @@ class PeerConnectionClient private constructor(
     private fun setReceivedCandidates() {
         if (peerConnection == null) return
 
-        candidates.forEach {
-            peerConnection!!.addIceCandidate(it)
+        synchronized(candidates) {
+            candidates.forEach {
+                peerConnection!!.addIceCandidate(it)
+            }
+            candidates.clear()
         }
-
-        candidates.clear()
     }
 
     private val sdpObserver = object : SdpObserver {
@@ -364,10 +365,10 @@ class PeerConnectionClient private constructor(
         private var instance: PeerConnectionClient? = null
 
         fun getInstance(
-            context: Context,
-            eglBase: EglBase,
-            localVideoSink: VideoSink,
-            remoteVideoSink: VideoSink
+                context: Context,
+                eglBase: EglBase,
+                localVideoSink: VideoSink,
+                remoteVideoSink: VideoSink
         ): PeerConnectionClient {
             if (instance == null)
                 instance = PeerConnectionClient(context, eglBase, localVideoSink, remoteVideoSink)

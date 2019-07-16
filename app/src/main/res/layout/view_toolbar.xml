@@ -10,8 +10,6 @@
         android:layout_height="@dimen/dp32"
         android:layout_marginStart="@dimen/dp20"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="@dimen/dp4"
-        android:scaleType="fitCenter"
         android:src="@drawable/ic_arrowback"
         android:tint="@color/textColor"
         app:layout_collapseMode="pin"
@@ -42,17 +40,13 @@
         app:layout_goneMarginEnd="@dimen/dp52"
         app:layout_goneMarginStart="@dimen/dp52" />
 
-
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/ib_action"
-        android:layout_width="@dimen/dp36"
-        android:layout_height="@dimen/dp36"
+        android:layout_width="@dimen/dp32"
+        android:layout_height="@dimen/dp32"
         android:layout_marginEnd="@dimen/dp20"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="@dimen/dp4"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_accept_call"
-        android:tint="@color/textColor"
+        android:scaleType="center"
         app:layout_collapseMode="pin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

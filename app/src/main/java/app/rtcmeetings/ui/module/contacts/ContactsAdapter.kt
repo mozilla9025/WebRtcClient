@@ -8,7 +8,10 @@ import app.rtcmeetings.R
 import app.rtcmeetings.data.db.dbentity.Contact
 import kotlinx.android.synthetic.main.item_contact.view.*
 
-class ContactsAdapter(private var data: List<Contact>?) : RecyclerView.Adapter<ContactsAdapter.ContactVH>() {
+class ContactsAdapter constructor(
+        private var data: List<Contact>?,
+        private val clickListener: (Contact) -> Unit
+) : RecyclerView.Adapter<ContactsAdapter.ContactVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactVH {
         return ContactVH(LayoutInflater.from(parent.context)
@@ -34,6 +37,9 @@ class ContactsAdapter(private var data: List<Contact>?) : RecyclerView.Adapter<C
         fun bind(contact: Contact) {
             itemView.tvName.text = contact.name
             itemView.tvEmail.text = contact.email
+            itemView.btnCall.setOnClickListener {
+                clickListener.invoke(contact)
+            }
         }
     }
 }

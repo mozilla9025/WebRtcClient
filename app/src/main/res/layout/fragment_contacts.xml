@@ -12,8 +12,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tv_action_icon="@drawable/ic_add_contact"
         app:tv_action_left_icon="@drawable/ic_arrowback"
-        app:tv_action_left_tint="@color/textColorDark"
         app:tv_text="Contacts" />
 
     <androidx.recyclerview.widget.RecyclerView
