@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import app.rtcmeetings.R
 import app.rtcmeetings.data.db.dbentity.Contact
 import kotlinx.android.synthetic.main.item_contact.view.*
-import android.widget.Filterable
-import app.rtcmeetings.R
 
 
 class ContactsAdapter constructor(
@@ -16,13 +16,11 @@ class ContactsAdapter constructor(
 ) : RecyclerView.Adapter<ContactsAdapter.ContactVH>(), Filterable {
 
     private var data: List<Contact>? = null
-    var filteredData = data
+    private var filteredData: List<Contact>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactVH {
-        return ContactVH(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_contact, parent, false)
-        )
+        return ContactVH(LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_contact, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -37,6 +35,7 @@ class ContactsAdapter constructor(
 
     fun updateData(contacts: List<Contact>) {
         this.data = contacts
+        this.filteredData = data
         notifyDataSetChanged()
     }
 
@@ -60,8 +59,8 @@ class ContactsAdapter constructor(
                     val filteredList = ArrayList<Contact>()
                     data?.forEach {
                         if (it.name.toLowerCase().contains(charString.toLowerCase()) || it.email.toLowerCase().contains(
-                                charString.toLowerCase()
-                            )
+                                        charString.toLowerCase()
+                                )
                         ) {
                             filteredList.add(it)
                         }
