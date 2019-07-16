@@ -10,7 +10,7 @@
 
 
     <style name="AppTheme.BaseAuthorizationButton" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:background">@drawable/shape_btn_auth_gradient</item>
+        <item name="android:background">@drawable/shape_btn_blue_gradient</item>
         <item name="android:fontFamily">@font/helvetica_neue</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/sp16</item>
@@ -21,7 +21,7 @@
     </style>
 
     <style name="AppTheme.GradientedLoginButton" parent="AppTheme.BaseAuthorizationButton">
-        <item name="android:background">@drawable/shape_btn_auth_gradient</item>
+        <item name="android:background">@drawable/shape_btn_blue_gradient</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

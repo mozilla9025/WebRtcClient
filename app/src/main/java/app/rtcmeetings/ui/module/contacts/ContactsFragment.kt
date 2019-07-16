@@ -1,5 +1,6 @@
 package app.rtcmeetings.ui.module.contacts
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -20,10 +21,12 @@ import app.rtcmeetings.base.BaseFragment
 import app.rtcmeetings.data.db.dbentity.Contact
 import app.rtcmeetings.data.db.dbentity.toUser
 import app.rtcmeetings.data.entity.User
+import app.rtcmeetings.helper.CheckHelper
 import app.rtcmeetings.network.result.Status
 import app.rtcmeetings.network.ws.WsService
-import app.rtcmeetings.util.i
 import app.rtcmeetings.webrtc.CallEvent
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.dialog_add_contact.view.*
 import kotlinx.android.synthetic.main.dialog_find_contact.view.*
@@ -36,6 +39,12 @@ class ContactsFragment : BaseFragment() {
     lateinit var viewModel: ContactsViewModel
 
     private var wsService: WsService? = null
+
+    private val adapter: ContactsAdapter by lazy {
+        ContactsAdapter { contact ->
+            startCall(contact)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +77,14 @@ class ContactsFragment : BaseFragment() {
         observeData()
         viewModel.getContacts()
 
-        toolbarView.setOnActionLeftClickListener { onBackPressed() }
-        toolbarView.setOnActionClickListener { showSearchDialog() }
+        rvContacts.run {
+            layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
+            adapter = this@ContactsFragment.adapter
+        }
+        toolbarView.run {
+            setOnActionLeftClickListener { onBackPressed() }
+            setOnActionClickListener { showSearchDialog() }
+        }
     }
 
     private fun showSearchDialog() {
@@ -81,10 +96,10 @@ class ContactsFragment : BaseFragment() {
                 .setPositiveButton("Find") { dialog, _ ->
                     val text = view.etSearch.text
                     text?.let {
-                        if (text.isNotBlank() && !text.contains("^[a-zA-Z]*\$")) {
-                            viewModel.findUser(text.toString().i)
+                        if (text.isNotBlank() && CheckHelper.isValidEmail(text)) {
+                            viewModel.findUser(text.toString())
                             dialog.dismiss()
-                        } else Toast.makeText(context!!, "ID has wrong type", Toast.LENGTH_SHORT).show()
+                        } else Toast.makeText(context!!, "Invalid email", Toast.LENGTH_SHORT).show()
                     }
                 }
                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
@@ -114,21 +129,31 @@ class ContactsFragment : BaseFragment() {
     }
 
     private fun startCall(contact: Contact) {
-        wsService?.getSocketId()?.let { socketId ->
-            CallEvent.startCall(context!!, contact.toUser(), socketId)
-        } ?: Toast.makeText(context!!, "No WS connection", Toast.LENGTH_SHORT).show()
+        TedPermission.with(activity!!)
+                .setPermissions(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                        Manifest.permission.RECORD_AUDIO
+                )
+                .setPermissionListener(object : PermissionListener {
+                    override fun onPermissionGranted() {
+                        wsService?.getSocketId()?.let { socketId ->
+                            CallEvent.startCall(context!!, contact.toUser(), socketId)
+                        }
+                                ?: Toast.makeText(context!!, "No WS connection", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                        Toast.makeText(context!!, "Required permissions denied", Toast.LENGTH_SHORT).show()
+                    }
+                }).check()
     }
 
     private fun observeData() {
         viewModel.getContactsLiveData.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    rvContacts.run {
-                        layoutManager = LinearLayoutManager(context!!, RecyclerView.VERTICAL, false)
-                        adapter = ContactsAdapter(it.data) { contact ->
-                            startCall(contact)
-                        }
-                    }
+                    it.data?.let { list -> adapter.updateData(list) }
                 }
                 Status.LOADING -> {
                 }

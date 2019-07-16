@@ -12,16 +12,11 @@ class P2pCallViewModel @Inject constructor(
         private val getUserUseCase: GetUserUseCase
 ) : BaseViewModel() {
 
-    val userLiveData: MutableLiveData<User> by lazy {
-        MutableLiveData<User>()
-    }
+    val userLiveData: MutableLiveData<User> = MutableLiveData()
+    val currUserLiveData: MutableLiveData<User> = MutableLiveData()
 
-    val currUserLiveData: MutableLiveData<User> by lazy {
-        MutableLiveData<User>()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
+    override fun clear() {
+        super.clear()
         userLiveData.value = null
     }
 
@@ -44,5 +39,4 @@ class P2pCallViewModel @Inject constructor(
                 })
         )
     }
-
 }

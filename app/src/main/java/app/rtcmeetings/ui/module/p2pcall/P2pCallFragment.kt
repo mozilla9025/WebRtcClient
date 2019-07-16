@@ -52,7 +52,7 @@ class P2pCallFragment : BaseFragment() {
                 wsService?.getSocketId()?.let { socketId ->
                     CallEvent.startCall(context!!, user, socketId)
                 } ?: Toast.makeText(context!!, "No WS connection", Toast.LENGTH_SHORT).show()
-            } ?: Toast.makeText(context!!, "User not found", Toast.LENGTH_SHORT).show()
+            }
         })
 
         toolbarView.setOnActionLeftClickListener { onBackPressed() }
@@ -112,6 +112,7 @@ class P2pCallFragment : BaseFragment() {
 
     override fun onStop() {
         super.onStop()
+        viewModel.clear()
         activity?.unbindService(serviceConnection)
     }
 

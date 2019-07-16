@@ -26,8 +26,8 @@ class ContactsViewModel @Inject constructor(
         MutableLiveData<Response<User>>()
     }
 
-    internal fun findUser(id: Int) {
-        add(getUserUseCase.getUserById(id)
+    internal fun findUser(email: String) {
+        add(getUserUseCase.getUserByEmail(email)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ userLiveData.value = Response.success(it) }, {
                     userLiveData.value = Response.failure(it)

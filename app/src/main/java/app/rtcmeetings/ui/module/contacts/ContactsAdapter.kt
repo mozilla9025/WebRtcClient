@@ -9,9 +9,10 @@ import app.rtcmeetings.data.db.dbentity.Contact
 import kotlinx.android.synthetic.main.item_contact.view.*
 
 class ContactsAdapter constructor(
-        private var data: List<Contact>?,
         private val clickListener: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactsAdapter.ContactVH>() {
+
+    private var data: List<Contact>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactVH {
         return ContactVH(LayoutInflater.from(parent.context)

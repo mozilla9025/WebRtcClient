@@ -16,6 +16,11 @@ class GetUserUseCaseImpl @Inject constructor(
                 .subscribeOn(Schedulers.io())
     }
 
+    override fun getUserByEmail(email: String): Single<User> {
+        return userRepository.getUserByEmail(email)
+                .subscribeOn(Schedulers.io())
+    }
+
     override fun getMe(): Single<User> {
         return userRepository.getMe()
                 .subscribeOn(Schedulers.io())

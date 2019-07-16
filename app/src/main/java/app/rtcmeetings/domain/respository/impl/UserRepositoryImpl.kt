@@ -14,6 +14,10 @@ class UserRepositoryImpl @Inject constructor(
         return userApi.getUser(id)
     }
 
+    override fun getUserByEmail(email: String): Single<User> {
+        return userApi.getUser(email)
+    }
+
     override fun getMe(): Single<User> {
         return userApi.getMe()
     }

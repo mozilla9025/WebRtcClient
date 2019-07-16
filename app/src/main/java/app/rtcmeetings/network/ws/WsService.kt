@@ -103,6 +103,7 @@ class WsService : Service() {
 
     private val onVideoToggle = Emitter.Listener {
         runCatching {
+            logd(it[0].toString())
             CallEvent.onVideoToggle(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
@@ -141,17 +142,17 @@ class WsService : Service() {
     private fun connect() {
         if (socket == null || !socket?.connected()!!) {
             disposables.add(
-                checkAuthUseCase.execute()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        when (it) {
-                            true -> createConnection()
-                            else -> closeConnection()
-                        }
-                    }, {
-                        loge(it)
-                        closeConnection()
-                    })
+                    checkAuthUseCase.execute()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                when (it) {
+                                    true -> createConnection()
+                                    else -> closeConnection()
+                                }
+                            }, {
+                                loge(it)
+                                closeConnection()
+                            })
             )
             checkConnection()
         }
@@ -164,8 +165,8 @@ class WsService : Service() {
 
     private fun createConnection() {
         wsClient = WsClient(
-            BuildConfig.WS_URL,
-            SocketQuery("token", authStorage.getRawToken())
+                BuildConfig.WS_URL,
+                SocketQuery("token", authStorage.getRawToken())
         )
 
         wsClient!!.connect()

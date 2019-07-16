@@ -5,5 +5,6 @@ import io.reactivex.Single
 
 interface GetUserUseCase {
     fun getUserById(id: Int): Single<User>
+    fun getUserByEmail(email: String): Single<User>
     fun getMe(): Single<User>
 }

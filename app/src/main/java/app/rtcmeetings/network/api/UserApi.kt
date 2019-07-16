@@ -10,7 +10,9 @@ interface UserApi {
     @GET("/account/{id}")
     fun getUser(@Path("id") id: Int): Single<User>
 
+    @GET("/account/by/{email}")
+    fun getUser(@Path("email") email: String): Single<User>
+
     @GET("/account")
     fun getMe(): Single<User>
-
 }

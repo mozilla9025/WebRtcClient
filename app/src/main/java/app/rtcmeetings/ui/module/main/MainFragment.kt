@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseFragment
+import app.rtcmeetings.network.ws.WsService
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_main.*
 import javax.inject.Inject
@@ -35,8 +36,11 @@ class MainFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.logOutLiveData.observe(viewLifecycleOwner, Observer {
             when {
-                it -> Navigation.findNavController(view)
-                        .navigate(MainFragmentDirections.actionMainFragmentToStartFragment())
+                it -> {
+                    WsService.disconnect(context!!)
+                    Navigation.findNavController(view)
+                            .navigate(MainFragmentDirections.actionMainFragmentToStartFragment())
+                }
                 else -> Toast.makeText(context!!, "Unable to log out", Toast.LENGTH_SHORT).show()
             }
         })

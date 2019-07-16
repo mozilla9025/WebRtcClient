@@ -2,7 +2,6 @@ package app.rtcmeetings.network.request
 
 import com.google.gson.annotations.SerializedName
 
-
 class CallRequest {
     @SerializedName("socketID")
     var socketId: String? = null
