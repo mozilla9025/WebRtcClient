@@ -137,6 +137,14 @@ object CallEvent {
         )
     }
 
+    fun onSocketIdChange(context: Context, socketId: String) {
+        ContextCompat.startForegroundService(
+            context,
+            getIntent(context, CallService.ACTION_SOCKET_ID_CHANGED)
+                .apply { putExtra(CallService.EXTRA_SOCKET_ID, socketId) }
+        )
+    }
+
     private fun getIntent(context: Context, act: String): Intent {
         return Intent(context, CallService::class.java).apply {
             action = act

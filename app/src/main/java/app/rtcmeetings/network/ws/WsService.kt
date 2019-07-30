@@ -6,13 +6,13 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
-import android.widget.Toast
 import app.rtcmeetings.BuildConfig
 import app.rtcmeetings.data.AuthStorage
 import app.rtcmeetings.domain.usecase.CheckAuthUseCase
 import app.rtcmeetings.network.request.CallRequest
 import app.rtcmeetings.util.logd
 import app.rtcmeetings.util.loge
+import app.rtcmeetings.util.logi
 import app.rtcmeetings.webrtc.CallEvent
 import com.google.gson.Gson
 import dagger.android.AndroidInjection
@@ -56,6 +56,7 @@ class WsService : Service() {
 
     private val onCall = Emitter.Listener {
         runCatching {
+            logi(it[0].toString())
             CallEvent.onCall(this@WsService, it[0].toString(), getSocketId()!!)
         }.onFailure { loge(it) }
     }
@@ -83,6 +84,7 @@ class WsService : Service() {
 
     private val onMiss = Emitter.Listener {
         runCatching {
+            logi(it[0].toString())
             CallEvent.onMiss(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
@@ -106,14 +108,6 @@ class WsService : Service() {
             logd(it[0].toString())
             CallEvent.onVideoToggle(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
-    }
-
-    private val onConnect = Emitter.Listener {
-        runCatching {
-            AndroidSchedulers.mainThread().scheduleDirect {
-                Toast.makeText(this@WsService, "Ws connected", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     fun getSocketId(): String? {
@@ -142,17 +136,17 @@ class WsService : Service() {
     private fun connect() {
         if (socket == null || !socket?.connected()!!) {
             disposables.add(
-                    checkAuthUseCase.execute()
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
-                                when (it) {
-                                    true -> createConnection()
-                                    else -> closeConnection()
-                                }
-                            }, {
-                                loge(it)
-                                closeConnection()
-                            })
+                checkAuthUseCase.execute()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        when (it) {
+                            true -> createConnection()
+                            else -> closeConnection()
+                        }
+                    }, {
+                        loge(it)
+                        closeConnection()
+                    })
             )
             checkConnection()
         }
@@ -165,16 +159,18 @@ class WsService : Service() {
 
     private fun createConnection() {
         wsClient = WsClient(
-                BuildConfig.WS_URL,
-                SocketQuery("token", authStorage.getRawToken())
+            BuildConfig.WS_URL,
+            SocketQuery("token", authStorage.getRawToken())
         )
 
-        wsClient!!.connect()
-        wsClient!!.getSocket()?.let {
-            socket = it
+        with(wsClient!!) {
+            connect()
+            getSocket()?.let {
+                socket = it
+            }
         }
-        socket!!.run {
-            on(Socket.EVENT_CONNECT, onConnect)
+
+        socket?.run {
             on(WsEvent.NEW_CALL, onCall)
             on(WsEvent.ACCEPT, onAccept)
             on(WsEvent.DECLINE, onDecline)
@@ -188,7 +184,6 @@ class WsService : Service() {
 
     private fun closeConnection() {
         socket?.run {
-            off(Socket.EVENT_CONNECT, onConnect)
             off(WsEvent.NEW_CALL, onCall)
             off(WsEvent.ACCEPT, onAccept)
             off(WsEvent.DECLINE, onDecline)

@@ -12,15 +12,17 @@ import kotlinx.android.synthetic.main.item_contact.view.*
 
 
 class ContactsAdapter constructor(
-        private val clickListener: (Contact) -> Unit
+    private val clickListener: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactsAdapter.ContactVH>(), Filterable {
 
     private var data: List<Contact>? = null
     private var filteredData: List<Contact>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactVH {
-        return ContactVH(LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_contact, parent, false))
+        return ContactVH(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_contact, parent, false)
+        )
     }
 
     override fun getItemCount(): Int {
@@ -58,9 +60,8 @@ class ContactsAdapter constructor(
                 } else {
                     val filteredList = ArrayList<Contact>()
                     data?.forEach {
-                        if (it.name.toLowerCase().contains(charString.toLowerCase()) || it.email.toLowerCase().contains(
-                                        charString.toLowerCase()
-                                )
+                        if (it.name.toLowerCase().contains(charString.toLowerCase())
+                            || it.email.toLowerCase().contains(charString.toLowerCase())
                         ) {
                             filteredList.add(it)
                         }

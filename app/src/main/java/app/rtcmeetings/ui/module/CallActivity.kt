@@ -10,15 +10,17 @@ import android.os.IBinder
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Toast
 import app.rtcmeetings.R
 import app.rtcmeetings.base.BaseActivity
 import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.util.logw
+import app.rtcmeetings.util.rxbus.RxBus
+import app.rtcmeetings.util.rxbus.RxEvent
 import app.rtcmeetings.webrtc.*
 import app.rtcmeetings.webrtc.video.CamSide
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.include_active_call.*
 import kotlinx.android.synthetic.main.include_incoming_call.*
 import kotlinx.android.synthetic.main.include_outgoing_call.*
@@ -28,6 +30,7 @@ import org.webrtc.RendererCommon
 class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     private var callService: CallService? = null
+    private var rxBusDisposable: Disposable? = null
 
     private var accepted = false
     private var denied = false
@@ -39,7 +42,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             callService = (service as CallService.LocalBinder).service
-            callService!!.run {
+            with(callService!!) {
                 remoteVideo.run {
                     init(eglBase.eglBaseContext, null)
                     setEnableHardwareScaler(true)
@@ -77,6 +80,11 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_call)
+
+        rxBusDisposable = RxBus.listen(RxEvent.CallFinish::class.java).subscribe {
+            releaseVideoViews()
+            finish()
+        }
     }
 
     override fun onStart() {
@@ -102,7 +110,10 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
             addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             statusBarColor = 0
             navigationBarColor = 0
-            addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            addFlags(
+                WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION or
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+            )
         }
     }
 
@@ -112,15 +123,22 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         unbindCallService()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        rxBusDisposable?.dispose()
+        rxBusDisposable = null
+    }
+
     override fun onConnect() {
         runOnUiThread {
+            showToast("Connected")
             setUpActiveCallView()
         }
     }
 
     override fun onCreatingConnection() {
         runOnUiThread {
-            Toast.makeText(this@CallActivity, "Connection creating", Toast.LENGTH_SHORT).show()
+            showToast("Creating connection")
         }
     }
 
@@ -133,6 +151,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onFail() {
         runOnUiThread {
+            showToast("Failed to connect")
             releaseVideoViews()
             finish()
         }
