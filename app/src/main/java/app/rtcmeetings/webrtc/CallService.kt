@@ -298,6 +298,8 @@ class CallService : Service(), WebRtcClientListener {
         val id = json.get("id").asInt
         val sdp = json.get("targetSDP").asString
 
+        logd("REMOTE SDP $sdp")
+
         if (id == callId) {
             webRtcClient?.setRemoteSdp(SessionDescription(SessionDescription.Type.ANSWER, sdp))
             sendLocalIceCandidates()
@@ -341,6 +343,7 @@ class CallService : Service(), WebRtcClientListener {
         val extras = intent.getStringExtra(EXTRA_STRING)
         val exchange = gson.fromJson<IceExchange>(extras, IceExchange::class.java)
         val candidate = IceCandidate(exchange.sdpMid, exchange.mLineIndex, exchange.sdp)
+        logd("REMOTE CANDIDATE $candidate")
         webRtcClient?.addIceCandidate(candidate)
     }
 

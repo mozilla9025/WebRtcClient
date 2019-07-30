@@ -56,56 +56,56 @@ class WsService : Service() {
 
     private val onCall = Emitter.Listener {
         runCatching {
-            logi(it[0].toString())
+            logi("CALL ${it[0]}")
             CallEvent.onCall(this@WsService, it[0].toString(), getSocketId()!!)
         }.onFailure { loge(it) }
     }
 
     private val onAccept = Emitter.Listener {
         runCatching {
-            logd(it[0].toString())
+            logi("ACCEPT ${it[0]}")
             CallEvent.onAccept(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
 
     private val onDecline = Emitter.Listener {
         runCatching {
-            logd(it[0].toString())
+            logi("DECLINE ${it[0]}")
             CallEvent.onDecline(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
 
     private val onCancel = Emitter.Listener {
         runCatching {
-            logd(it[0].toString())
+            logi("CANCEL ${it[0]}")
             CallEvent.onCancel(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
 
     private val onMiss = Emitter.Listener {
         runCatching {
-            logi(it[0].toString())
+            logi("MISS ${it[0]}")
             CallEvent.onMiss(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
 
     private val onFinish = Emitter.Listener {
         runCatching {
-            logd(it[0].toString())
+            logi("FINISH ${it[0]}")
             CallEvent.onFinish(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
 
     private val onIce = Emitter.Listener {
         runCatching {
-            logd(it[0].toString())
+            logi("CANDIDATE ${it[0]}")
             CallEvent.onIce(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
 
     private val onVideoToggle = Emitter.Listener {
         runCatching {
-            logd(it[0].toString())
+            logi("VIDEO TOGGLE ${it[0]}")
             CallEvent.onVideoToggle(this@WsService, it[0].toString())
         }.onFailure { loge(it) }
     }
@@ -200,6 +200,7 @@ class WsService : Service() {
     private fun emit(intent: Intent) {
         val extras = intent.getStringExtra(EXTRA_JSON)
         val callRequest = gson.fromJson<CallRequest>(extras, CallRequest::class.java)
+        logd("$callRequest")
         socket?.emit(callRequest.event, gson.toJson(callRequest))
     }
 
