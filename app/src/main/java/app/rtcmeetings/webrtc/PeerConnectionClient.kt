@@ -170,15 +170,19 @@ class PeerConnectionClient private constructor(
 
         val iceServers = listOf(
             PeerConnection.IceServer
-                .builder("turn:80.240.24.249:3478")
-                .setUsername("423423536097752177")
-                .setPassword("Wa8t1DbPNSsbFabcHs+hA2enFhk=")
+                .builder("turn:turn.connectycube.com:5349?transport=udp")
+                .setUsername("connectycube")
+                .setPassword("4c29501ca9207b7fb9c4b4b6b04faeb1")
                 .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
                 .createIceServer(),
             PeerConnection.IceServer
-                .builder("stun:80.240.24.249:3478")
-                .setUsername("423423536097752177")
-                .setPassword("Wa8t1DbPNSsbFabcHs+hA2enFhk=")
+                .builder("turn:turn.connectycube.com:5349?transport=tcp")
+                .setUsername("connectycube")
+                .setPassword("4c29501ca9207b7fb9c4b4b6b04faeb1")
+                .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
+                .createIceServer(),
+            PeerConnection.IceServer
+                .builder("stun:turn.connectycube.com")
                 .setTlsCertPolicy(PeerConnection.TlsCertPolicy.TLS_CERT_POLICY_INSECURE_NO_CHECK)
                 .createIceServer()
         )
