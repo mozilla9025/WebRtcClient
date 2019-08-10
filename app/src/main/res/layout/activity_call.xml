@@ -5,10 +5,10 @@
     android:background="@drawable/call_gradient_bg"
     android:orientation="vertical">
 
+    <include layout="@layout/include_active_call" />
+
     <include layout="@layout/include_incoming_call" />
 
     <include layout="@layout/include_outgoing_call" />
-
-    <include layout="@layout/include_active_call" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

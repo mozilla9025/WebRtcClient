@@ -5,9 +5,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.Window
 import android.view.WindowManager
 import app.rtcmeetings.R
@@ -24,8 +27,6 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.include_active_call.*
 import kotlinx.android.synthetic.main.include_incoming_call.*
 import kotlinx.android.synthetic.main.include_outgoing_call.*
-import org.webrtc.RendererCommon
-
 
 class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
@@ -43,21 +44,18 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             callService = (service as CallService.LocalBinder).service
             with(callService!!) {
-                remoteVideo.run {
+                localVideoRenderer.run {
                     init(eglBase.eglBaseContext, null)
-                    setEnableHardwareScaler(true)
-                }
-                localVideo.run {
-                    init(eglBase.eglBaseContext, null)
-                    setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_BALANCED)
                     setMirror(true)
                     setZOrderMediaOverlay(true)
-                    setEnableHardwareScaler(true)
                 }
+                remoteVideoRenderer.run {
+                    init(eglBase.eglBaseContext, null)
+                }
+                setTargets(localVideoRenderer, remoteVideoRenderer)
                 setCallEventListener(this@CallActivity)
                 setDeviceEventListener(this@CallActivity)
 
-                setTargets(localVideo, remoteVideo)
                 when (callState) {
                     CallState.OUTGOING_PENDING, CallState.OUTGOING_CONNECTING -> setUpOutgoingCallView(interlocutor!!)
                     CallState.INCOMING_PENDING, CallState.INCOMING_CONNECTING -> setUpIncomingCallView(interlocutor!!)
@@ -95,6 +93,8 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onResume() {
         super.onResume()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         window.run {
             decorView.systemUiVisibility =
                 (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -119,6 +119,11 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onStop() {
         super.onStop()
+        callService?.run {
+            setTargets(null, null)
+            setDeviceEventListener(null)
+            setCallEventListener(null)
+        }
         releaseVideoViews()
         unbindCallService()
     }
@@ -159,13 +164,19 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onRemoteUserStopStream() {
         runOnUiThread {
-            remoteVideo.visibility = View.GONE
+            remoteVideoRenderer?.visibility = GONE
+//            localVideo?.visibility = callService?.let {
+//                if (it.localVideoEnabled) VISIBLE else GONE
+//            } ?: GONE
         }
     }
 
     override fun onRemoteUserStartStream() {
         runOnUiThread {
-            remoteVideo.visibility = View.VISIBLE
+            remoteVideoRenderer?.visibility = VISIBLE
+//            localVideo?.visibility = callService?.let {
+//                if (it.localVideoEnabled) VISIBLE else GONE
+//            } ?: GONE
         }
     }
 
@@ -178,26 +189,30 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onCamToggle(isEnabled: Boolean) {
         runOnUiThread {
-            localVideo.visibility = if (isEnabled) View.VISIBLE else View.GONE
-            btnCam.setImageResource(if (isEnabled) R.drawable.ic_cam else R.drawable.ic_cam_off)
+            if (isEnabled) {
+                localVideoRenderer?.visibility = VISIBLE
+            } else {
+                localVideoRenderer?.visibility = GONE
+            }
+            btnCam?.setImageResource(if (isEnabled) R.drawable.ic_cam else R.drawable.ic_cam_off)
         }
     }
 
     override fun onMicToggle(isEnabled: Boolean) {
         runOnUiThread {
-            btnMic.setImageResource(if (isEnabled) R.drawable.ic_mic else R.drawable.ic_mic_off)
+            btnMic?.setImageResource(if (isEnabled) R.drawable.ic_mic else R.drawable.ic_mic_off)
         }
     }
 
     override fun onSpeakerToggle(isEnabled: Boolean) {
         runOnUiThread {
-            btnSpeaker.setImageResource(if (isEnabled) R.drawable.ic_speaker_on else R.drawable.ic_speaker_off)
+            btnSpeaker?.setImageResource(if (isEnabled) R.drawable.ic_speaker_on else R.drawable.ic_speaker_off)
         }
     }
 
     override fun onCamSwitch(camSide: CamSide) {
         runOnUiThread {
-            localVideo.setMirror(camSide == CamSide.FRONT_FACING)
+            localVideoRenderer?.setMirror(camSide == CamSide.FRONT_FACING)
         }
     }
 
@@ -255,34 +270,43 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         btnSpeaker.setOnClickListener {
             CallEvent.localSpeakerToggle(
                 this@CallActivity,
-                !callService?.isSpeakerEnabled!!
+                callService?.let {
+                    !it.isSpeakerEnabled
+                } ?: false
             )
         }
     }
 
     private fun setUpActiveCallView() {
-        clIncomingCallRoot.visibility = View.GONE
-        clOutgoingCallRoot.visibility = View.GONE
-        clActiveCallRoot.visibility = View.VISIBLE
+        clIncomingCallRoot.visibility = GONE
+        clOutgoingCallRoot.visibility = GONE
+        clActiveCallRoot.visibility = VISIBLE
+        callService?.let {
+            localVideoRenderer.visibility = if (it.localVideoEnabled) VISIBLE else GONE
+
+            remoteVideoRenderer.visibility = if (it.remoteVideoEnabled) VISIBLE else GONE
+            clControlBtns.visibility = VISIBLE
+        }
     }
 
     private fun setUpIncomingCallView(user: User) {
-        clActiveCallRoot.visibility = View.GONE
-        clOutgoingCallRoot.visibility = View.GONE
-        clIncomingCallRoot.visibility = View.VISIBLE
+        clActiveCallRoot.visibility = GONE
+        clOutgoingCallRoot.visibility = GONE
+        clIncomingCallRoot.visibility = VISIBLE
         tvNameIncoming.text = user.name
     }
 
     private fun setUpOutgoingCallView(user: User) {
-        clIncomingCallRoot.visibility = View.GONE
-        clActiveCallRoot.visibility = View.GONE
-        clOutgoingCallRoot.visibility = View.VISIBLE
+        clIncomingCallRoot.visibility = GONE
+        clActiveCallRoot.visibility = GONE
+        clOutgoingCallRoot.visibility = VISIBLE
         tvNameOutgoing.text = user.name
     }
 
+    @Synchronized
     private fun releaseVideoViews() {
-        localVideo?.release()
-        remoteVideo?.release()
+        localVideoRenderer?.release()
+        remoteVideoRenderer?.release()
     }
 
     private fun bindCallService() {

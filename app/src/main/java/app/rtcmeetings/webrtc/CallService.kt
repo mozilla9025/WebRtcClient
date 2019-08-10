@@ -11,6 +11,7 @@ import app.rtcmeetings.data.entity.User
 import app.rtcmeetings.domain.usecase.CallUseCase
 import app.rtcmeetings.network.request.CallRequest
 import app.rtcmeetings.network.request.IceExchange
+import app.rtcmeetings.network.request.VideoToggle
 import app.rtcmeetings.network.ws.WsEvent
 import app.rtcmeetings.network.ws.WsService
 import app.rtcmeetings.ui.module.CallActivity
@@ -42,6 +43,8 @@ class CallService : Service(), WebRtcClientListener {
     var callState: CallState? = null
     var cameraSide: CamSide? = null
     var interlocutor: User? = null
+    var localVideoEnabled = true
+    var remoteVideoEnabled = true
 
     private var startTime: Long? = null
     private var socketId: String? = null
@@ -80,7 +83,7 @@ class CallService : Service(), WebRtcClientListener {
         deviceEventListener = listener
     }
 
-    fun setTargets(localTarget: VideoSink, remoteTarget: VideoSink) {
+    fun setTargets(localTarget: VideoSink?, remoteTarget: VideoSink?) {
         localVideoSinkProxy.target = localTarget
         remoteVideoSinkProxy.target = remoteTarget
     }
@@ -187,7 +190,8 @@ class CallService : Service(), WebRtcClientListener {
         startTime = System.currentTimeMillis()
         callState = CallState.CONNECTED
         cameraSide = webRtcClient?.getCameraSide()
-        isSpeakerEnabled = webRtcClient?.localVideoEnabled ?: false
+        localVideoEnabled = webRtcClient?.localVideoEnabled ?: false
+        isSpeakerEnabled = localVideoEnabled
         audioManager.startCommunication(true)
         audioManager.setSpeakerEnabled(isSpeakerEnabled)
         callEventListener?.onConnect()
@@ -298,8 +302,6 @@ class CallService : Service(), WebRtcClientListener {
         val id = json.get("id").asInt
         val sdp = json.get("targetSDP").asString
 
-        logd("REMOTE SDP $sdp")
-
         if (id == callId) {
             webRtcClient?.setRemoteSdp(SessionDescription(SessionDescription.Type.ANSWER, sdp))
             sendLocalIceCandidates()
@@ -343,14 +345,16 @@ class CallService : Service(), WebRtcClientListener {
         val extras = intent.getStringExtra(EXTRA_STRING)
         val exchange = gson.fromJson<IceExchange>(extras, IceExchange::class.java)
         val candidate = IceCandidate(exchange.sdpMid, exchange.mLineIndex, exchange.sdp)
-        logd("REMOTE CANDIDATE $candidate")
         webRtcClient?.addIceCandidate(candidate)
     }
 
     private fun handleRemoteVideoToggle(intent: Intent) {
         val extras = intent.getStringExtra(EXTRA_STRING)
-        val enabled = gson.fromJson<Boolean>(extras, Boolean::class.java)
-        if (enabled)
+
+        val videoToggle = gson.fromJson<VideoToggle>(extras, VideoToggle::class.java)
+
+        remoteVideoEnabled = videoToggle.state
+        if (remoteVideoEnabled)
             callEventListener?.onRemoteUserStartStream()
         else
             callEventListener?.onRemoteUserStopStream()
@@ -426,11 +430,12 @@ class CallService : Service(), WebRtcClientListener {
 
     private fun handleLocalToggleCamera() {
         webRtcClient?.toggleCam()?.let { camEnabled ->
+            localVideoEnabled = camEnabled
             deviceEventListener?.onCamToggle(camEnabled)
             val callRequest = CallRequest().apply {
                 userId = interlocutor!!.id
                 event = WsEvent.VIDEO_TOGGLE
-                payload = gson.toJson(camEnabled)
+                payload = gson.toJson(VideoToggle(camEnabled))
             }
             CallEvent.localSpeakerToggle(this@CallService, camEnabled)
             WsService.emit(this@CallService, gson.toJson(callRequest))
