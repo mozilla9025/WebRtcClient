@@ -47,7 +47,6 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
                 localVideoRenderer.run {
                     init(eglBase.eglBaseContext, null)
                     setMirror(true)
-                    setZOrderMediaOverlay(true)
                 }
                 remoteVideoRenderer.run {
                     init(eglBase.eglBaseContext, null)
@@ -164,19 +163,13 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
 
     override fun onRemoteUserStopStream() {
         runOnUiThread {
-            remoteVideoRenderer?.visibility = GONE
-//            localVideo?.visibility = callService?.let {
-//                if (it.localVideoEnabled) VISIBLE else GONE
-//            } ?: GONE
+            viewBackground?.visibility = VISIBLE
         }
     }
 
     override fun onRemoteUserStartStream() {
         runOnUiThread {
-            remoteVideoRenderer?.visibility = VISIBLE
-//            localVideo?.visibility = callService?.let {
-//                if (it.localVideoEnabled) VISIBLE else GONE
-//            } ?: GONE
+            viewBackground?.visibility = GONE
         }
     }
 
@@ -284,7 +277,7 @@ class CallActivity : BaseActivity(), CallEventListener, DeviceEventListener {
         callService?.let {
             localVideoRenderer.visibility = if (it.localVideoEnabled) VISIBLE else GONE
 
-            remoteVideoRenderer.visibility = if (it.remoteVideoEnabled) VISIBLE else GONE
+            viewBackground.visibility = if (it.remoteVideoEnabled) GONE else VISIBLE
             clControlBtns.visibility = VISIBLE
         }
     }

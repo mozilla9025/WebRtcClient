@@ -17,15 +17,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-    <org.webrtc.SurfaceViewRenderer
-            android:layout_width="@dimen/dp0"
-            android:layout_margin="@dimen/dp12"
-            app:layout_constraintDimensionRatio="V,3:4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3"
-            android:layout_height="@dimen/dp0"
-            android:id="@+id/localVideoRenderer"/>
+    <View android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:id="@+id/viewBackground"
+          android:background="@drawable/call_gradient_bg"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clControlBtns"
@@ -99,6 +94,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/btnSwitchCam"
                 app:layout_constraintTop_toTopOf="parent"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <org.webrtc.SurfaceViewRenderer
+            android:layout_width="@dimen/dp0"
+            android:layout_margin="@dimen/dp12"
+            app:layout_constraintDimensionRatio="H,3:4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.3"
+            android:layout_height="@dimen/dp0"
+            android:id="@+id/localVideoRenderer"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
